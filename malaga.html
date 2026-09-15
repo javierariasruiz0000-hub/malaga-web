@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Malaguistas 💙🤍</title>
+
+<style>
+
+/* ===== GENERAL ===== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #001b3d, #0077c8);
+    color: white;
+}
+
+
+/* ===== CABECERA ===== */
+
+header {
+    text-align: center;
+    padding: 70px 20px;
+    background: linear-gradient(135deg, #003b7a, #009ee3);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+}
+
+header h1 {
+    font-size: 55px;
+    margin: 0;
+    animation: aparecer 1.5s;
+}
+
+header p {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+/* ===== MENÚ ===== */
+
+nav {
+    background: #00152f;
+    padding: 18px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+nav a:hover {
+    color: #00c8ff;
+}
+
+
+/* ===== SECCIONES ===== */
+
+.seccion {
+    max-width: 1000px;
+    margin: 55px auto;
+    padding: 30px;
+    text-align: center;
+}
+
+.seccion h2 {
+    font-size: 38px;
+}
+
+
+/* ===== BOTONES ===== */
+
+button {
+    background: white;
+    color: #0066aa;
+    border: none;
+    padding: 14px 25px;
+    border-radius: 30px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 8px;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.08);
+}
+
+
+/* ===== TARJETAS ===== */
+
+.tarjetas {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.tarjeta {
+    background: rgba(255,255,255,0.12);
+    padding: 25px;
+    border-radius: 20px;
+    width: 280px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+.tarjeta:hover {
+    transform: translateY(-10px);
+    background: rgba(255,255,255,0.2);
+}
+
+.tarjeta h3 {
+    font-size: 23px;
+}
+
+
+/* ===== NOTICIAS ===== */
+
+.noticia {
+    background: rgba(255,255,255,0.12);
+    padding: 20px;
+    margin: 15px auto;
+    max-width: 750px;
+    border-radius: 18px;
+    text-align: left;
+}
+
+.noticia h3 {
+    margin-top: 0;
+}
+
+
+/* ===== QUIZ ===== */
+
+#pregunta {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#puntuacion {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 25px;
+}
+
+
+/* ===== PIE ===== */
+
+footer {
+    background: #00152f;
+    text-align: center;
+    padding: 35px;
+    margin-top: 60px;
+}
+
+
+/* ===== ANIMACIÓN ===== */
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ===== CABECERA ===== -->
+
+<header>
+
+    <h1>💙🤍 MÁLAGA CF 🤍💙</h1>
+
+    <p>🐟 LA PASIÓN DE LOS BOQUERONES 🐟</p>
+
+    <button onclick="mensaje()">
+        🔥 ¡VAMOS MÁLAGA!
+    </button>
+
+</header>
+
+
+<!-- ===== MENÚ ===== -->
+
+<nav>
+
+    <a href="#inicio">Inicio</a>
+
+    <a href="#malaga">Málaga</a>
+
+   <a href="https://www.malagacf.com/noticias" target="_blank">
+    📰 Noticias
+</a>
+
+    <a href="#quiz">Quiz</a>
+
+</nav>
+
+
+<!-- ===== INICIO ===== -->
+
+<section class="seccion" id="inicio">
+
+    <h2>🔥 ¡VAMOS MÁLAGA! 🔥</h2>
+
+    <p>
+        Bienvenido a mi página malaguista.
+    </p>
+
+    <p>
+        Aquí encontrarás noticias, información,
+        un quiz y mucho más sobre el Málaga CF.
+    </p>
+
+</section>
+
+
+<!-- ===== MÁLAGA ===== -->
+
+<section class="seccion" id="malaga">
+
+    <h2>🏟️ NUESTRO MÁLAGA</h2>
+
+    <div class="tarjetas">
+
+
+        <div class="tarjeta">
+
+            <h3>🏟️ La Rosaleda</h3>
+
+            <p>
+                El estadio donde los malaguistas
+                animan al equipo.
+            </p>
+
+        </div>
+
+
+        <div class="tarjeta">
+
+            <h3>🐟 Los Boquerones</h3>
+
+            <p>
+                Uno de los apodos más conocidos
+                del Málaga y sus aficionados.
+            </p>
+
+        </div>
+
+
+        <div class="tarjeta">
+
+            <h3>💙🤍 La afición</h3>
+
+            <p>
+                Una afición que anima al equipo
+                en las buenas y en las malas.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- ===== NOTICIAS ===== -->
+
+<section class="seccion" id="noticias">
+
+    <h2>📰 NOTICIAS DEL MÁLAGA</h2>
+
+    <p>
+        Aquí podrás poner las últimas noticias
+        del Málaga CF.
+    </p>
+
+
+    <div class="noticia">
+
+        <h3>⚽ Actualidad del equipo</h3>
+
+        <p>
+            Esta sección está preparada para
+            añadir noticias del Málaga.
+        </p>
+
+    </div>
+
+
+    <div class="noticia">
+
+        <h3>🏟️ La Rosaleda</h3>
+
+        <p>
+            Toda la información y novedades
+            relacionadas con el equipo.
+        </p>
+
+    </div>
+
+
+    <div class="noticia">
+
+        <h3>🔥 ¡Vamos Málaga!</h3>
+
+        <p>
+            Sigue apoyando al equipo y disfrutando
+            del fútbol malaguista.
+        </p>
+
+    </div>
+
+
+</section>
+
+
+<!-- ===== QUIZ ===== -->
+
+<section class="seccion" id="quiz">
+
+    <h2>🧠 QUIZ MALAGUISTA</h2>
+
+    <p id="pregunta"></p>
+
+    <div id="respuestas"></div>
+
+    <p id="puntuacion">
+        Puntos: 0
+    </p>
+
+</section>
+
+
+<!-- ===== PIE ===== -->
+
+<footer>
+
+    <h2>💙🤍 MÁLAGA CF 🤍💙</h2>
+
+    <p>
+        🐟 ¡SIEMPRE MÁLAGA! ⚽
+    </p>
+
+</footer>
+
+
+<!-- ===== JAVASCRIPT ===== -->
+
+<script>
+
+
+/* BOTÓN VAMOS MÁLAGA */
+
+function mensaje() {
+
+    alert("💙🤍 ¡VAMOS MÁLAGA! 🤍💙");
+
+}
+
+
+/* ===== QUIZ ===== */
+
+let preguntaActual = 0;
+
+let puntos = 0;
+
+
+const preguntas = [
+
+    {
+        pregunta: "¿Dónde juega el Málaga CF?",
+        respuestas: [
+            "La Cartuja",
+            "La Rosaleda",
+            "El Bernabéu"
+        ],
+        correcta: 1
+    },
+
+
+    {
+        pregunta: "¿Cuál es uno de los apodos del Málaga?",
+        respuestas: [
+            "Los Boquerones",
+            "Los Leones",
+            "Los Vikingos"
+        ],
+        correcta: 0
+    },
+
+
+    {
+        pregunta: "¿De qué ciudad es el Málaga CF?",
+        respuestas: [
+            "Sevilla",
+            "Málaga",
+            "Córdoba"
+        ],
+        correcta: 1
+    },
+
+
+    {
+        pregunta: "¿Cómo se llama el estadio del Málaga?",
+        respuestas: [
+            "La Rosaleda",
+            "Mestalla",
+            "San Mamés"
+        ],
+        correcta: 0
+    },
+
+
+    {
+        pregunta: "¿Qué colores identifican al Málaga?",
+        respuestas: [
+            "Rojo y blanco",
+            "Azul y blanco",
+            "Verde y negro"
+        ],
+        correcta: 1
+    },
+
+
+    {
+        pregunta: "¿Qué deporte practica el Málaga CF?",
+        respuestas: [
+            "Baloncesto",
+            "Fútbol",
+            "Tenis"
+        ],
+        correcta: 1
+    },
+
+
+    {
+        pregunta: "¿Cómo se llama a los aficionados del Málaga?",
+        respuestas: [
+            "Malaguistas",
+            "Madrileños",
+            "Bilbaínos"
+        ],
+        correcta: 0
+    },
+
+
+    {
+        pregunta: "¿Qué animal aparece en el apodo del Málaga?",
+        respuestas: [
+            "🐟 Boquerón",
+            "🦁 León",
+            "🐯 Tigre"
+        ],
+        correcta: 0
+    },
+
+
+    {
+        pregunta: "¿Qué equipo queremos que gane?",
+        respuestas: [
+            "Málaga CF",
+            "Otro equipo",
+            "Ninguno"
+        ],
+        correcta: 0
+    },
+
+
+    {
+        pregunta: "¿Cuál es nuestro grito?",
+        respuestas: [
+            "¡VAMOS MÁLAGA!",
+            "¡VAMOS MADRID!",
+            "¡VAMOS SEVILLA!"
+        ],
+        correcta: 0
+    }
+
+];
+
+
+function mostrarPregunta() {
+
+    const pregunta =
+        preguntas[preguntaActual];
+
+
+    document.getElementById("pregunta").innerText =
+        "Pregunta " +
+        (preguntaActual + 1) +
+        "/10: " +
+        pregunta.pregunta;
+
+
+    const contenedor =
+        document.getElementById("respuestas");
+
+
+    contenedor.innerHTML = "";
+
+
+    pregunta.respuestas.forEach(
+        (respuesta, indice) => {
+
+
+        const boton =
+            document.createElement("button");
+
+
+        boton.innerText = respuesta;
+
+
+        boton.onclick = function() {
+
+            comprobar(indice);
+
+        };
+
+
+        contenedor.appendChild(boton);
+
+    });
+
+}
+
+
+function comprobar(indice) {
+
+
+    if (
+        indice ===
+        preguntas[preguntaActual].correcta
+    ) {
+
+        puntos++;
+
+        alert("🎉 ¡CORRECTO! 💙🤍");
+
+    } else {
+
+        alert("❌ ¡FALLASTE! 😅");
+
+    }
+
+
+    preguntaActual++;
+
+
+    document.getElementById(
+        "puntuacion"
+    ).innerText =
+        "Puntos: " + puntos;
+
+
+    if (
+        preguntaActual <
+        preguntas.length
+    ) {
+
+        mostrarPregunta();
+
+    } else {
+
+
+        document.getElementById(
+            "pregunta"
+        ).innerText =
+            "🏆 ¡QUIZ TERMINADO!";
+
+
+        document.getElementById(
+            "respuestas"
+        ).innerHTML =
+
+            "<h2>Has conseguido " +
+            puntos +
+            " de 10 puntos 💙🤍</h2>" +
+
+            "<button onclick='reiniciar()'>" +
+            "🔄 Jugar otra vez" +
+            "</button>";
+
+    }
+
+}
+
+
+function reiniciar() {
+
+    preguntaActual = 0;
+
+    puntos = 0;
+
+
+    document.getElementById(
+        "puntuacion"
+    ).innerText =
+        "Puntos: 0";
+
+
+    mostrarPregunta();
+
+}
+
+
+/* EMPEZAR QUIZ */
+
+mostrarPregunta();
+
+</script>
+
+
+</body>
+
+</html>
