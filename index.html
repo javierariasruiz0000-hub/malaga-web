@@ -860,6 +860,54 @@ async function cargarResultados() {
 
 cargarResultados();
 </script>
+<script>
+async function cargarResultados() {
+    const contenedor = document.getElementById("resultadosMalaga");
+
+    contenedor.innerHTML = "<p>⏳ Cargando resultados...</p>";
+
+    try {
+        const respuesta = await fetch(
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/teams/99/schedule"
+        );
+
+        const datos = await respuesta.json();
+        const partidos = datos.events || [];
+
+        contenedor.innerHTML = "";
+
+        partidos.slice(0, 10).forEach(partido => {
+
+            const equipos = partido.competitions[0].competitors;
+
+            const local = equipos.find(e => e.homeAway === "home");
+            const visitante = equipos.find(e => e.homeAway === "away");
+
+            const fecha = new Date(partido.date).toLocaleDateString("es-ES");
+
+            let resultado = "Próximamente";
+
+            if (partido.status.type.completed) {
+                resultado = local.score + " - " + visitante.score;
+            }
+
+            contenedor.innerHTML += `
+                <div class="noticia">
+                    <h3>⚽ ${local.team.displayName} vs ${visitante.team.displayName}</h3>
+                    <p>📅 ${fecha}</p>
+                    <p>📊 <strong>${resultado}</strong></p>
+                </div>
+            `;
+        });
+
+    } catch (error) {
+        contenedor.innerHTML =
+            "<p>❌ No se pudieron cargar los resultados.</p>";
+    }
+}
+
+cargarResultados();
+</script>
 </body>
 
 </html>
