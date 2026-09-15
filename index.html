@@ -134,18 +134,7 @@ button:hover {
 }
 
 
-<!-- ===== RESULTADOS ===== -->
-<section class="seccion" id="resultados">
 
-    <h2>⚽ RESULTADOS DEL MÁLAGA CF</h2>
-
-    <div id="resultadosMalaga">
-        <p>⏳ Cargando resultados...</p>
-    </div>
-
-</section>
-
-</section><!-- ===== RESULTADOS ===== -->
 
     
     <!-- ===== CLASIFICACIÓN ===== -->
@@ -223,6 +212,31 @@ footer {
 
 
 <body>
+    
+    <!-- ===== RESULTADOS ===== -->
+<section class="seccion" id="resultados">
+
+    <h2>⚽ RESULTADOS DEL MÁLAGA CF</h2>
+
+    <div id="resultadosMalaga">
+        <p>⏳ Cargando resultados...</p>
+    </div>
+
+</section>
+
+<!-- ===== CLASIFICACIÓN ===== -->
+<section class="seccion" id="clasificacion">
+
+    <h2>📊 CLASIFICACIÓN</h2>
+
+    <div class="noticia">
+        <h3>🏆 Málaga CF</h3>
+        <p>📍 Posición: próximamente</p>
+        <p>⚽ Puntos: próximamente</p>
+        <p>🔥 ¡Vamos Málaga!</p>
+    </div>
+
+</section>
 
 
 <!-- ===== CABECERA ===== -->
@@ -788,128 +802,8 @@ mostrarPregunta();
 </script>
 
 
-<script>
-async function cargarResultados() {
 
-    const contenedor = document.getElementById("resultadosMalaga");
 
-    try {
-
-        const respuesta = await fetch(
-            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=20260901-20260930"
-        );
-
-        const datos = await respuesta.json();
-
-        const partidos = datos.events.filter(evento => {
-
-            const nombres = evento.competitions[0].competitors
-                .map(equipo => equipo.team.displayName);
-
-            return nombres.some(nombre =>
-                nombre.toLowerCase().includes("málaga")
-            );
-        });
-
-        if (partidos.length === 0) {
-            contenedor.innerHTML =
-                "<p>😕 No se encontraron partidos.</p>";
-            return;
-        }
-
-        contenedor.innerHTML = "";
-
-        partidos.reverse().forEach(partido => {
-
-            const competencia = partido.competitions[0];
-            const equipos = competencia.competitors;
-
-            const local = equipos.find(equipo => equipo.homeAway === "home");
-            const visitante = equipos.find(equipo => equipo.homeAway === "away");
-
-            const fecha = new Date(partido.date).toLocaleDateString(
-                "es-ES",
-                {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric"
-                }
-            );
-
-            const estado = partido.status.type.completed
-                ? `${local.score} - ${visitante.score}`
-                : "Próximamente";
-
-            contenedor.innerHTML += `
-                <div class="noticia">
-                    <h3>⚽ ${local.team.displayName} vs ${visitante.team.displayName}</h3>
-                    <p>📅 ${fecha}</p>
-                    <p>📊 <strong>${estado}</strong></p>
-                </div>
-            `;
-        });
-
-    } catch (error) {
-
-        contenedor.innerHTML =
-            "<p>❌ No se pudieron cargar los resultados.</p>";
-
-        console.error(error);
-    }
-}
-
-cargarResultados();
-</script>
-<script>
-async function cargarResultados() {
-    const contenedor = document.getElementById("resultadosMalaga");
-
-    contenedor.innerHTML = "<p>⏳ Cargando resultados...</p>";
-
-    try {
-        const respuesta = await fetch(
-            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/teams/99/schedule"
-        );
-
-        const datos = await respuesta.json();
-        const partidos = datos.events || [];
-
-        contenedor.innerHTML = "";
-
-        partidos.slice(0, 10).forEach(partido => {
-
-            const equipos = partido.competitions[0].competitors;
-
-            const local = equipos.find(e => e.homeAway === "home");
-            const visitante = equipos.find(e => e.homeAway === "away");
-
-            const fecha = new Date(partido.date).toLocaleDateString("es-ES");
-
-            let resultado = "Próximamente";
-
-            if (partido.status.type.completed) {
-                resultado = local.score + " - " + visitante.score;
-            }
-
-            contenedor.innerHTML += `
-                <div class="noticia">
-                    <h3>⚽ ${local.team.displayName} vs ${visitante.team.displayName}</h3>
-                    <p>📅 ${fecha}</p>
-                    <p>📊 <strong>${resultado}</strong></p>
-                </div>
-            `;
-        });
-
-    } catch (error) {
-        contenedor.innerHTML =
-            "<p>❌ No se pudieron cargar los resultados.</p>";
-    }
-}
-
-cargarResultados();
-    
-    alert("¡EL JAVASCRIPT FUNCIONA!");
-</script>
 </body>
 
 </html>
