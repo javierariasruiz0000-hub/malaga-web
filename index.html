@@ -788,6 +788,78 @@ mostrarPregunta();
 </script>
 
 
+<script>
+async function cargarResultados() {
+
+    const contenedor = document.getElementById("resultadosMalaga");
+
+    try {
+
+        const respuesta = await fetch(
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=20260901-20260930"
+        );
+
+        const datos = await respuesta.json();
+
+        const partidos = datos.events.filter(evento => {
+
+            const nombres = evento.competitions[0].competitors
+                .map(equipo => equipo.team.displayName);
+
+            return nombres.some(nombre =>
+                nombre.toLowerCase().includes("málaga")
+            );
+        });
+
+        if (partidos.length === 0) {
+            contenedor.innerHTML =
+                "<p>😕 No se encontraron partidos.</p>";
+            return;
+        }
+
+        contenedor.innerHTML = "";
+
+        partidos.reverse().forEach(partido => {
+
+            const competencia = partido.competitions[0];
+            const equipos = competencia.competitors;
+
+            const local = equipos.find(equipo => equipo.homeAway === "home");
+            const visitante = equipos.find(equipo => equipo.homeAway === "away");
+
+            const fecha = new Date(partido.date).toLocaleDateString(
+                "es-ES",
+                {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric"
+                }
+            );
+
+            const estado = partido.status.type.completed
+                ? `${local.score} - ${visitante.score}`
+                : "Próximamente";
+
+            contenedor.innerHTML += `
+                <div class="noticia">
+                    <h3>⚽ ${local.team.displayName} vs ${visitante.team.displayName}</h3>
+                    <p>📅 ${fecha}</p>
+                    <p>📊 <strong>${estado}</strong></p>
+                </div>
+            `;
+        });
+
+    } catch (error) {
+
+        contenedor.innerHTML =
+            "<p>❌ No se pudieron cargar los resultados.</p>";
+
+        console.error(error);
+    }
+}
+
+cargarResultados();
+</script>
 </body>
 
 </html>
