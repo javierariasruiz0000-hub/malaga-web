@@ -345,7 +345,111 @@ footer {
     </div>
 
 
+</section><!-- ===== NOTICIAS AUTOMÁTICAS ===== -->
+
+<section class="seccion" id="noticias">
+
+    <h2>📰 ÚLTIMAS NOTICIAS DEL MÁLAGA CF</h2>
+
+    <p id="estadoNoticias">
+        ⏳ Cargando las últimas noticias...
+    </p>
+
+    <div id="listaNoticias"></div>
+
 </section>
+
+<script>
+
+async function cargarNoticias() {
+
+    const feed =
+        "https://sportdirectradio.es/feed/";
+
+    const api =
+        "https://api.rss2json.com/v1/api.json?rss_url="
+        + encodeURIComponent(feed);
+
+    try {
+
+        const respuesta = await fetch(api);
+
+        const datos = await respuesta.json();
+
+        const lista =
+            document.getElementById("listaNoticias");
+
+        const estado =
+            document.getElementById("estadoNoticias");
+
+        lista.innerHTML = "";
+
+        if (!datos.items || datos.items.length === 0) {
+
+            estado.innerText =
+                "😕 No hay noticias disponibles.";
+
+            return;
+
+        }
+
+        estado.innerText =
+            "🔄 Noticias actualizadas automáticamente";
+
+        datos.items
+            .filter(noticia =>
+                noticia.title.toLowerCase().includes("málaga")
+                ||
+                noticia.description.toLowerCase().includes("málaga")
+            )
+            .slice(0, 6)
+            .forEach(noticia => {
+
+                const tarjeta =
+                    document.createElement("div");
+
+                tarjeta.className = "noticia";
+
+                const fecha =
+                    new Date(noticia.pubDate)
+                    .toLocaleDateString("es-ES");
+
+                tarjeta.innerHTML = `
+
+                    <h3>⚽ ${noticia.title}</h3>
+
+                    <p>📅 ${fecha}</p>
+
+                    <a
+                        href="${noticia.link}"
+                        target="_blank"
+                    >
+
+                        <button>
+                            Leer noticia →
+                        </button>
+
+                    </a>
+
+                `;
+
+                lista.appendChild(tarjeta);
+
+            });
+
+    } catch (error) {
+
+        document.getElementById("estadoNoticias")
+            .innerText =
+            "❌ No se pudieron cargar las noticias.";
+
+    }
+
+}
+
+cargarNoticias();
+
+</script>
 
 
 <!-- ===== QUIZ ===== -->
