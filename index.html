@@ -415,23 +415,24 @@ async function cargarNoticias() {
                     .toLocaleDateString("es-ES");
 
                 tarjeta.innerHTML = `
+    <h3>⚽ ${noticia.title}</h3>
+    <p>📅 ${fecha}</p>
 
-                    <h3>⚽ ${noticia.title}</h3>
+    <button onclick="leerNoticia(this)">
+        Leer noticia →
+    </button>
 
-                    <p>📅 ${fecha}</p>
+    <div class="contenidoNoticia" style="display:none;">
+        <hr>
+        ${noticia.description}
 
-                    <a
-                        href="${noticia.link}"
-                        target="_blank"
-                    >
+        <br><br>
 
-                        <button>
-                            Leer noticia →
-                        </button>
-
-                    </a>
-
-                `;
+        <button onclick="cerrarNoticia(this)">
+            ✖ Cerrar noticia
+        </button>
+    </div>
+`;
 
                 lista.appendChild(tarjeta);
 
@@ -448,6 +449,19 @@ async function cargarNoticias() {
 }
 
 cargarNoticias();
+ function leerNoticia(boton) {
+    const contenido = boton.parentElement.querySelector(".contenidoNoticia");
+    contenido.style.display = "block";
+    boton.style.display = "none";
+}
+
+function cerrarNoticia(boton) {
+    const contenido = boton.parentElement;
+    const tarjeta = contenido.parentElement;
+
+    contenido.style.display = "none";
+    tarjeta.querySelector("button").style.display = "inline-block";
+}
 
 </script>
 
