@@ -454,6 +454,70 @@ async function cargarResultadosMalaga() {
 }
 
 cargarResultadosMalaga();
+</script><script>
+async function cargarClasificacion() {
+
+    const contenedor = document.getElementById("tablaClasificacion");
+
+    try {
+
+        const url =
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/standings";
+
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+
+        const grupos = datos.children;
+
+        if (!grupos || grupos.length === 0) {
+            contenedor.innerHTML =
+                "<p>😕 No se pudo encontrar la clasificación.</p>";
+            return;
+        }
+
+        let tabla = "<table>";
+
+        tabla += `
+            <tr>
+                <th>Pos.</th>
+                <th>Equipo</th>
+                <th>Pts</th>
+            </tr>
+        `;
+
+        const equipos = grupos[0].standings.entries;
+
+        equipos.forEach((equipo, indice) => {
+
+            const nombre =
+                equipo.team.displayName;
+
+            const puntos =
+                equipo.stats.find(s => s.name === "points")?.value ?? "-";
+
+            tabla += `
+                <tr>
+                    <td>${indice + 1}</td>
+                    <td>${nombre}</td>
+                    <td>${puntos}</td>
+                </tr>
+            `;
+
+        });
+
+        tabla += "</table>";
+
+        contenedor.innerHTML = tabla;
+
+    } catch (error) {
+
+        contenedor.innerHTML =
+            "<p>❌ No se pudo cargar la clasificación.</p>";
+
+    }
+}
+
+cargarClasificacion();
 </script>
 </body>
 
