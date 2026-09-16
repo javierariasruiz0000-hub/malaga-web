@@ -482,19 +482,81 @@ function cerrarNoticia(boton) {
     </div>
 
 </section>
-    
+  <script>
+async function cargarClasificacionMalaga() {
+
+    const contenedor = document.getElementById("tablaClasificacion");
+
+    try {
+
+        const url =
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/standings";
+
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+
+        let tabla = null;
+
+        if (datos.children) {
+            for (const grupo of datos.children) {
+                if (grupo.standings) {
+                    tabla = grupo.standings;
+                    break;
+                }
+            }
+        }
+
+        if (!tabla) {
+            contenedor.innerHTML =
+                "<p>😕 No se pudo encontrar la clasificación.</p>";
+            return;
+        }
+
+        const equipos = tabla.entries;
+
+        contenedor.innerHTML = "";
+
+        equipos.forEach((equipo, indice) => {
+
+            const nombre = equipo.team.displayName;
+
+            const puntos =
+                equipo.stats.find(s => s.name === "points")?.value ?? 0;
+
+            const partidos =
+                equipo.stats.find(s => s.name === "gamesPlayed")?.value ?? 0;
+
+            const tarjeta = document.createElement("div");
+
+            tarjeta.className = "noticia";
+
+            tarjeta.innerHTML = `
+                <h3>${indice + 1}. ${nombre}</h3>
+                <p>⚽ Puntos: ${puntos}</p>
+                <p>🎮 Partidos: ${partidos}</p>
+            `;
+
+            contenedor.appendChild(tarjeta);
+        });
+
+    } catch (error) {
+
+        contenedor.innerHTML =
+            "<p>❌ No se pudo cargar la clasificación.</p>";
+
+    }
+}
+
+cargarClasificacionMalaga();
+</script>  
     <!-- ===== CLASIFICACIÓN ===== -->
 <section class="seccion" id="clasificacion">
 
     <h2>📊 CLASIFICACIÓN</h2>
 
-    <div class="noticia">
-        <h3>🏆 Málaga CF</h3>
-        <p>📍 Posición: próximamente</p>
-        <p>⚽ Puntos: próximamente</p>
-        <p>🔥 ¡Vamos Málaga!</p>
-    </div>
-
+   <div id="tablaClasificacion">
+    <p>⏳ Cargando clasificación...</p>
+</div>
 </section>
 <!-- ===== QUIZ ===== -->
 
