@@ -391,134 +391,18 @@ footer {
 </section>
 
 <script>
-async function cargarResultadosMalaga() {
+const resultados = [
+    ["Málaga CF", "-", "-", "Próximo partido"],
+    ["Último partido", "-", "-", "Málaga CF"]
+];
 
-    const contenedor = document.getElementById("resultadosMalaga");
+const contenedor = document.getElementById("resultadosMalaga");
 
-    try {
-
-        const url =
-          const url =
-    "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/teams/malaga/schedule";
-        const respuesta = await fetch(url);
-        const datos = await respuesta.json();
-
-        if (!datos.events || datos.events.length === 0) {
-            contenedor.innerHTML =
-                "<p>😕 No se encontraron partidos del Málaga.</p>";
-            return;
-        }
-
-        contenedor.innerHTML = "";
-
-        datos.events.slice(0, 10).forEach(partido => {
-
-            const equipos =
-                partido.competitions[0].competitors;
-
-            const local =
-                equipos.find(e => e.homeAway === "home");
-
-            const visitante =
-                equipos.find(e => e.homeAway === "away");
-
-            const marcadorLocal =
-                local.score?.displayValue ?? "-";
-
-            const marcadorVisitante =
-                visitante.score?.displayValue ?? "-";
-
-            const tarjeta =
-                document.createElement("div");
-
-            tarjeta.className = "noticia";
-
-            tarjeta.innerHTML = `
-                <h3>
-                    ⚽ ${local.team.displayName}
-                    ${marcadorLocal} - ${marcadorVisitante}
-                    ${visitante.team.displayName}
-                </h3>
-            `;
-
-            contenedor.appendChild(tarjeta);
-
-        });
-
-    } catch (error) {
-
-        contenedor.innerHTML =
-            "<p>❌ No se pudieron cargar los resultados.</p>";
-
-    }
-}
-
-cargarResultadosMalaga();
-</script><script>
-async function cargarClasificacion() {
-
-    const contenedor = document.getElementById("tablaClasificacion");
-
-    try {
-
-        const url =
-            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/standings";
-
-        const respuesta = await fetch(url);
-        const datos = await respuesta.json();
-
-        const grupos = datos.children;
-
-        if (!grupos || grupos.length === 0) {
-            contenedor.innerHTML =
-                "<p>😕 No se pudo encontrar la clasificación.</p>";
-            return;
-        }
-
-        let tabla = "<table>";
-
-        tabla += `
-            <tr>
-                <th>Pos.</th>
-                <th>Equipo</th>
-                <th>Pts</th>
-            </tr>
-        `;
-
-        const equipos = grupos[0].standings.entries;
-
-        equipos.forEach((equipo, indice) => {
-
-            const nombre =
-                equipo.team.displayName;
-
-            const puntos =
-                equipo.stats.find(s => s.name === "points")?.value ?? "-";
-
-            tabla += `
-                <tr>
-                    <td>${indice + 1}</td>
-                    <td>${nombre}</td>
-                    <td>${puntos}</td>
-                </tr>
-            `;
-
-        });
-
-        tabla += "</table>";
-
-        contenedor.innerHTML = tabla;
-
-    } catch (error) {
-
-        contenedor.innerHTML =
-            "<p>❌ No se pudo cargar la clasificación.</p>";
-
-    }
-}
-
-cargarClasificacion();
+contenedor.innerHTML = resultados.map(partido => `
+    <div class="noticia">
+        <h3>⚽ ${partido[0]} ${partido[1]} - ${partido[2]} ${partido[3]}</h3>
+    </div>
+`).join("");
 </script>
-</body>
 
 </html>
