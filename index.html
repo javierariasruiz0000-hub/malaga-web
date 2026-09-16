@@ -482,98 +482,16 @@ function cerrarNoticia(boton) {
     </div>
 
 </section>
- <script>
-async function cargarClasificacionMalaga() {
+ <!-- ===== CLASIFICACIÓN ===== -->
+<section class="seccion" id="clasificacion">
 
-    const contenedor = document.getElementById("tablaClasificacion");
+    <h2>📊 CLASIFICACIÓN</h2>
 
-    try {
+    <div id="tablaClasificacion">
+        <p>⏳ Cargando clasificación...</p>
+    </div>
 
-        const ligas = ["esp.1", "esp.2"];
-        let tablaEncontrada = null;
-
-        for (const liga of ligas) {
-
-            const url =
-                "https://site.api.espn.com/apis/site/v2/sports/soccer/"
-                + liga + "/standings";
-
-            const respuesta = await fetch(url);
-            const datos = await respuesta.json();
-
-            if (datos.children) {
-
-                for (const grupo of datos.children) {
-
-                    if (grupo.standings) {
-
-                        const equipos = grupo.standings.entries;
-
-                        const malaga = equipos.find(e =>
-                            e.team.displayName
-                                .toLowerCase()
-                                .includes("malaga")
-                            ||
-                            e.team.displayName
-                                .toLowerCase()
-                                .includes("málaga")
-                        );
-
-                        if (malaga) {
-                            tablaEncontrada = grupo.standings;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (tablaEncontrada) break;
-        }
-
-        if (!tablaEncontrada) {
-            contenedor.innerHTML =
-                "<p>😕 No se encontró la clasificación del Málaga.</p>";
-            return;
-        }
-
-        const equipos = tablaEncontrada.entries;
-
-        contenedor.innerHTML = "";
-
-        equipos.forEach((equipo, indice) => {
-
-            const nombre = equipo.team.displayName;
-
-            const puntos =
-                equipo.stats.find(s => s.name === "points")?.value ?? 0;
-
-            const partidos =
-                equipo.stats.find(s => s.name === "gamesPlayed")?.value ?? 0;
-
-            const tarjeta = document.createElement("div");
-
-            tarjeta.className = "noticia";
-
-            tarjeta.innerHTML = `
-                <h3>${indice + 1}. ${nombre}</h3>
-                <p>⚽ Puntos: ${puntos}</p>
-                <p>🎮 Partidos: ${partidos}</p>
-            `;
-
-            contenedor.appendChild(tarjeta);
-        });
-
-    } catch (error) {
-
-        contenedor.innerHTML =
-            "<p>❌ No se pudo cargar la clasificación.</p>";
-
-    }
-}
-
-cargarClasificacionMalaga();
-     alert("¡El código de clasificación funciona!");
-</script>
+</section>
     <!-- ===== CLASIFICACIÓN ===== -->
 <section class="seccion" id="clasificacion">
 
@@ -951,6 +869,97 @@ const marcadorVisitante = visitante.score?.displayValue ?? "-";
 }
 
 cargarResultadosMalaga();
+</script>
+<script>
+async function cargarClasificacionMalaga() {
+
+    const contenedor = document.getElementById("tablaClasificacion");
+
+    try {
+
+        const ligas = ["esp.1", "esp.2"];
+        let tablaEncontrada = null;
+
+        for (const liga of ligas) {
+
+            const url =
+                "https://site.api.espn.com/apis/site/v2/sports/soccer/"
+                + liga + "/standings";
+
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+
+            if (datos.children) {
+
+                for (const grupo of datos.children) {
+
+                    if (grupo.standings) {
+
+                        const equipos = grupo.standings.entries;
+
+                        const malaga = equipos.find(e =>
+                            e.team.displayName
+                                .toLowerCase()
+                                .includes("malaga")
+                            ||
+                            e.team.displayName
+                                .toLowerCase()
+                                .includes("málaga")
+                        );
+
+                        if (malaga) {
+                            tablaEncontrada = grupo.standings;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (tablaEncontrada) break;
+        }
+
+        if (!tablaEncontrada) {
+            contenedor.innerHTML =
+                "<p>😕 No se encontró la clasificación del Málaga.</p>";
+            return;
+        }
+
+        const equipos = tablaEncontrada.entries;
+
+        contenedor.innerHTML = "";
+
+        equipos.forEach((equipo, indice) => {
+
+            const nombre = equipo.team.displayName;
+
+            const puntos =
+                equipo.stats.find(s => s.name === "points")?.value ?? 0;
+
+            const partidos =
+                equipo.stats.find(s => s.name === "gamesPlayed")?.value ?? 0;
+
+            const tarjeta = document.createElement("div");
+
+            tarjeta.className = "noticia";
+
+            tarjeta.innerHTML = `
+                <h3>${indice + 1}. ${nombre}</h3>
+                <p>⚽ Puntos: ${puntos}</p>
+                <p>🎮 Partidos: ${partidos}</p>
+            `;
+
+            contenedor.appendChild(tarjeta);
+        });
+
+    } catch (error) {
+
+        contenedor.innerHTML =
+            "<p>❌ No se pudo cargar la clasificación.</p>";
+
+    }
+}
+
+cargarClasificacionMalaga();
 </script>
 </body>
 
