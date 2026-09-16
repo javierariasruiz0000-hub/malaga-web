@@ -837,12 +837,8 @@ async function cargarResultadosMalaga() {
             const visitante =
                 equipos.find(e => e.homeAway === "away");
 
-           const marcadorLocal =
-    local.score?.displayValue || local.score?.value || "-";
-
-const marcadorVisitante =
-    visitante.score?.displayValue || visitante.score?.value || "-";
-
+         const marcadorLocal = local.score?.displayValue ?? "-";
+const marcadorVisitante = visitante.score?.displayValue ?? "-";
             const tarjeta =
                 document.createElement("div");
 
