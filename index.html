@@ -392,6 +392,7 @@ footer {
 
 <script>
 ```javascript
+<script>
 const resultados = [
     {
         local: "RC Deportivo",
@@ -427,7 +428,7 @@ const resultados = [
         golesVisitante: "1",
         visitante: "Málaga CF",
         escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
-        fecha: "15/09/2026"
+        fecha: "13/09/2026"
     },
     {
         local: "Málaga CF",
@@ -435,37 +436,43 @@ const resultados = [
         golesLocal: "-",
         golesVisitante: "-",
         visitante: "Villarreal CF",
-       escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+        escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
         fecha: "17/09/2026 · 21:30"
     }
 ];
 
 const contenedor = document.getElementById("resultadosMalaga");
 
-contenedor.innerHTML = resultados.map(partido => `
-    <div class="noticia" style="text-align:center;">
-        <p>📅 ${partido.fecha}</p>
+if (contenedor) {
+    contenedor.innerHTML = resultados.map(partido => `
+        <div class="noticia" style="text-align:center; margin-bottom:20px;">
+            <p>📅 ${partido.fecha}</p>
 
-        <div style="display:flex; justify-content:center; align-items:center; gap:15px;">
+            <div style="display:flex; justify-content:center; align-items:center; gap:20px;">
 
-            <div>
-                <img src="${partido.escudoLocal}"
-                     style="width:50px;height:50px;object-fit:contain;">
-                <p>${partido.local}</p>
+                <div>
+                    <img src="${partido.escudoLocal}"
+                         width="60"
+                         height="60"
+                         style="object-fit:contain;">
+                    <p><strong>${partido.local}</strong></p>
+                </div>
+
+                <h2>${partido.golesLocal} - ${partido.golesVisitante}</h2>
+
+                <div>
+                    <img src="${partido.escudoVisitante}"
+                         width="60"
+                         height="60"
+                         style="object-fit:contain;">
+                    <p><strong>${partido.visitante}</strong></p>
+                </div>
+
             </div>
-
-            <h2>${partido.golesLocal} - ${partido.golesVisitante}</h2>
-
-            <div>
-                <img src="${partido.escudoVisitante}"
-                     style="width:50px;height:50px;object-fit:contain;">
-                <p>${partido.visitante}</p>
-            </div>
-
         </div>
-    </div>
-`).join("");
-```
+    `).join("");
+}
+</script>
 
 
 const contenedor = document.getElementById("resultadosMalaga");
