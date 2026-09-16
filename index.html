@@ -793,7 +793,73 @@ mostrarPregunta();
 
 
 
+<script>
 
+async function cargarResultados() {
+
+    const url =
+        "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/teams/malaga/schedule";
+
+    try {
+
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
+
+        const contenedor =
+            document.getElementById("resultadosMalaga");
+
+        if (!datos.events || datos.events.length === 0) {
+            contenedor.innerHTML =
+                "<p>😕 No hay resultados disponibles.</p>";
+            return;
+        }
+
+        contenedor.innerHTML = "";
+
+        datos.events.slice(0, 5).forEach(partido => {
+
+            const competidores =
+                partido.competitions[0].competitors;
+
+            const equipoLocal =
+                competidores.find(e => e.homeAway === "home");
+
+            const equipoVisitante =
+                competidores.find(e => e.homeAway === "away");
+
+            const marcadorLocal =
+                equipoLocal.score || "-";
+
+            const marcadorVisitante =
+                equipoVisitante.score || "-";
+
+            const tarjeta =
+                document.createElement("div");
+
+            tarjeta.className = "noticia";
+
+            tarjeta.innerHTML = `
+                <h3>⚽ ${equipoLocal.team.displayName}
+                ${marcadorLocal} - ${marcadorVisitante}
+                ${equipoVisitante.team.displayName}</h3>
+            `;
+
+            contenedor.appendChild(tarjeta);
+
+        });
+
+    } catch (error) {
+
+        document.getElementById("resultadosMalaga").innerHTML =
+            "<p>❌ No se pudieron cargar los resultados.</p>";
+
+    }
+
+}
+
+cargarResultados();
+
+</script>
 </body>
 
 </html>
