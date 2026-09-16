@@ -398,8 +398,8 @@ async function cargarResultadosMalaga() {
     try {
 
         const url =
-            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/teams/99/schedule";
-
+          const url =
+    "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/teams/malaga/schedule";
         const respuesta = await fetch(url);
         const datos = await respuesta.json();
 
