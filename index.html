@@ -366,94 +366,42 @@ footer {
 </section>
 
 <script>
-async function cargarClasificacionMalaga() {
+async function cargarResultadosMalaga() {
 
-    const contenedor =
-        document.getElementById("tablaClasificacion");
+    const contenedor = document.getElementById("resultadosMalaga");
 
     try {
 
-       const ligas = ["esp.1", "esp.2"];
+        const url =
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/teams/99/schedule";
 
-        let tablaEncontrada = null;
+        const respuesta = await fetch(url);
+        const datos = await respuesta.json();
 
-        for (const liga of ligas) {
-
-            try {
-
-                const url =
-                    "https://site.api.espn.com/apis/site/v2/sports/soccer/"
-                    + liga + "/standings";
-
-                const respuesta = await fetch(url);
-                const datos = await respuesta.json();
-
-                if (!datos.children) continue;
-
-                for (const grupo of datos.children) {
-
-                    if (!grupo.standings) continue;
-
-                    const equipos =
-                        grupo.standings.entries || [];
-
-                    const malaga = equipos.find(e => {
-
-                        const nombre =
-                            e.team?.displayName?.toLowerCase() || "";
-
-                        return nombre.includes("malaga")
-                            || nombre.includes("málaga");
-
-                    });
-
-                    if (malaga) {
-
-                        tablaEncontrada =
-                            grupo.standings;
-
-                        break;
-                    }
-                }
-
-                if (tablaEncontrada) break;
-
-            } catch (error) {
-
-                console.log(
-                    "No se pudo consultar " + liga
-                );
-
-            }
-        }
-
-        if (!tablaEncontrada) {
-
+        if (!datos.events || datos.events.length === 0) {
             contenedor.innerHTML =
-                "<p>😕 No se encontró la clasificación del Málaga.</p>";
-
+                "<p>😕 No se encontraron partidos del Málaga.</p>";
             return;
         }
 
-        const equipos =
-            tablaEncontrada.entries || [];
-
         contenedor.innerHTML = "";
 
-        equipos.forEach((equipo, indice) => {
+        datos.events.slice(0, 10).forEach(partido => {
 
-            const nombre =
-                equipo.team?.displayName || "Equipo";
+            const equipos =
+                partido.competitions[0].competitors;
 
-            const puntos =
-                equipo.stats?.find(
-                    s => s.name === "points"
-                )?.value ?? 0;
+            const local =
+                equipos.find(e => e.homeAway === "home");
 
-            const partidos =
-                equipo.stats?.find(
-                    s => s.name === "gamesPlayed"
-                )?.value ?? 0;
+            const visitante =
+                equipos.find(e => e.homeAway === "away");
+
+            const marcadorLocal =
+                local.score?.displayValue ?? "-";
+
+            const marcadorVisitante =
+                visitante.score?.displayValue ?? "-";
 
             const tarjeta =
                 document.createElement("div");
@@ -461,9 +409,11 @@ async function cargarClasificacionMalaga() {
             tarjeta.className = "noticia";
 
             tarjeta.innerHTML = `
-                <h3>${indice + 1}. ${nombre}</h3>
-                <p>⚽ Puntos: ${puntos}</p>
-                <p>🎮 Partidos: ${partidos}</p>
+                <h3>
+                    ⚽ ${local.team.displayName}
+                    ${marcadorLocal} - ${marcadorVisitante}
+                    ${visitante.team.displayName}
+                </h3>
             `;
 
             contenedor.appendChild(tarjeta);
@@ -473,13 +423,12 @@ async function cargarClasificacionMalaga() {
     } catch (error) {
 
         contenedor.innerHTML =
-            "<p>❌ No se pudo cargar la clasificación.</p>";
+            "<p>❌ No se pudieron cargar los resultados.</p>";
 
     }
 }
 
-cargarClasificacionMalaga();
-
+cargarResultadosMalaga();
 </script>
 </body>
 
