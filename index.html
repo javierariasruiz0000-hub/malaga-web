@@ -794,44 +794,54 @@ mostrarPregunta();
 
 
 <script>
+async function cargarResultadosMalaga() {
 
-async function cargarResultados() {
-
-    const url =
-        "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.2/teams/malaga/schedule";
+    const contenedor = document.getElementById("resultadosMalaga");
 
     try {
 
-        const respuesta = await fetch(url);
-        const datos = await respuesta.json();
+        const ligas = ["esp.1", "esp.2"];
+        let partidos = [];
 
-        const contenedor =
-            document.getElementById("resultadosMalaga");
+        for (const liga of ligas) {
 
-        if (!datos.events || datos.events.length === 0) {
+            const url =
+                "https://site.api.espn.com/apis/site/v2/sports/soccer/"
+                + liga
+                + "/teams/99/schedule";
+
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+
+            if (datos.events) {
+                partidos = partidos.concat(datos.events);
+            }
+        }
+
+        if (partidos.length === 0) {
             contenedor.innerHTML =
-                "<p>😕 No hay resultados disponibles.</p>";
+                "<p>😕 No se encontraron partidos del Málaga.</p>";
             return;
         }
 
         contenedor.innerHTML = "";
 
-        datos.events.slice(0, 5).forEach(partido => {
+        partidos.slice(0, 10).forEach(partido => {
 
-            const competidores =
+            const equipos =
                 partido.competitions[0].competitors;
 
-            const equipoLocal =
-                competidores.find(e => e.homeAway === "home");
+            const local =
+                equipos.find(e => e.homeAway === "home");
 
-            const equipoVisitante =
-                competidores.find(e => e.homeAway === "away");
+            const visitante =
+                equipos.find(e => e.homeAway === "away");
 
             const marcadorLocal =
-                equipoLocal.score || "-";
+                local.score || "-";
 
             const marcadorVisitante =
-                equipoVisitante.score || "-";
+                visitante.score || "-";
 
             const tarjeta =
                 document.createElement("div");
@@ -839,26 +849,25 @@ async function cargarResultados() {
             tarjeta.className = "noticia";
 
             tarjeta.innerHTML = `
-                <h3>⚽ ${equipoLocal.team.displayName}
-                ${marcadorLocal} - ${marcadorVisitante}
-                ${equipoVisitante.team.displayName}</h3>
+                <h3>
+                    ⚽ ${local.team.displayName}
+                    ${marcadorLocal} - ${marcadorVisitante}
+                    ${visitante.team.displayName}
+                </h3>
             `;
 
             contenedor.appendChild(tarjeta);
-
         });
 
     } catch (error) {
 
-        document.getElementById("resultadosMalaga").innerHTML =
+        contenedor.innerHTML =
             "<p>❌ No se pudieron cargar los resultados.</p>";
 
     }
-
 }
 
-cargarResultados();
-
+cargarResultadosMalaga();
 </script>
 </body>
 
