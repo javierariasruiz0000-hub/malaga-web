@@ -404,5 +404,39 @@ contenedor.innerHTML = resultados.map(partido => `
     </div>
 `).join("");
 </script>
+<script>
 
+const clasificacion = [
+    ["1", "Equipo", "0"],
+    ["2", "Equipo", "0"],
+    ["3", "Equipo", "0"],
+    ["4", "Equipo", "0"],
+    ["5", "Málaga CF", "0"],
+    ["6", "Equipo", "0"],
+    ["7", "Equipo", "0"],
+    ["8", "Equipo", "0"]
+];
+
+const tabla = document.getElementById("tablaClasificacion");
+
+tabla.innerHTML = `
+<table>
+    <tr>
+        <th>Pos.</th>
+        <th>Equipo</th>
+        <th>Pts</th>
+    </tr>
+
+    ${clasificacion.map(equipo => `
+    <tr>
+        <td>${equipo[0]}</td>
+        <td>${equipo[1]}</td>
+        <td>${equipo[2]}</td>
+    </tr>
+    `).join("")}
+
+</table>
+`;
+
+</script>
 </html>
