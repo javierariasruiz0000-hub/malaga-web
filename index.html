@@ -366,571 +366,97 @@ footer {
 </section>
 
 <script>
-
-async function cargarNoticias() {
-
-    const feed =
-        "https://sportdirectradio.es/feed/";
-
-    const api =
-        "https://api.rss2json.com/v1/api.json?rss_url="
-        + encodeURIComponent(feed);
-
-    try {
-
-        const respuesta = await fetch(api);
-
-        const datos = await respuesta.json();
-
-        const lista =
-            document.getElementById("listaNoticias");
-
-        const estado =
-            document.getElementById("estadoNoticias");
-
-        lista.innerHTML = "";
-
-        if (!datos.items || datos.items.length === 0) {
-
-            estado.innerText =
-                "😕 No hay noticias disponibles.";
-
-            return;
-
-        }
-
-        estado.innerText =
-            "🔄 Noticias actualizadas automáticamente";
-
-        datos.items
-            .filter(noticia =>
-                noticia.title.toLowerCase().includes("málaga")
-                ||
-                noticia.description.toLowerCase().includes("málaga")
-            )
-            .slice(0, 6)
-            .forEach(noticia => {
-
-                const tarjeta =
-                    document.createElement("div");
-
-                tarjeta.className = "noticia";
-
-                const fecha =
-                    new Date(noticia.pubDate)
-                    .toLocaleDateString("es-ES");
-
-                tarjeta.innerHTML = `
-    <h3>⚽ ${noticia.title}</h3>
-    <p>📅 ${fecha}</p>
-
-    <button onclick="leerNoticia(this)">
-        Leer noticia →
-    </button>
-
-    <div class="contenidoNoticia" style="display:none;">
-        <hr>
-        ${noticia.description}
-
-        <br><br>
-
-        <button onclick="cerrarNoticia(this)">
-            ✖ Cerrar noticia
-        </button>
-    </div>
-`;
-
-                lista.appendChild(tarjeta);
-
-            });
-
-    } catch (error) {
-
-        document.getElementById("estadoNoticias")
-            .innerText =
-            "❌ No se pudieron cargar las noticias.";
-
-    }
-
-}
-
-cargarNoticias();
- function leerNoticia(boton) {
-    const contenido = boton.parentElement.querySelector(".contenidoNoticia");
-    contenido.style.display = "block";
-    boton.style.display = "none";
-}
-
-function cerrarNoticia(boton) {
-    const contenido = boton.parentElement;
-    const tarjeta = contenido.parentElement;
-
-    contenido.style.display = "none";
-    tarjeta.querySelector("button").style.display = "inline-block";
-}
-
-</script>
-
-
-<!-- ===== RESULTADOS ===== -->
-<section class="seccion" id="resultados">
-
-    <h2>⚽ RESULTADOS DEL MÁLAGA CF</h2>
-
-    <div id="resultadosMalaga">
-        <p>⏳ Cargando resultados...</p>
-    </div>
-
-</section>
- <!-- ===== CLASIFICACIÓN ===== -->
-<section class="seccion" id="clasificacion">
-
-    <h2>📊 CLASIFICACIÓN</h2>
-
-    <div id="tablaClasificacion">
-        <p>⏳ Cargando clasificación...</p>
-    </div>
-
-</section>
-   
-<!-- ===== QUIZ ===== -->
-
-<section class="seccion" id="quiz">
-
-    <h2>🧠 QUIZ MALAGUISTA</h2>
-
-    <p id="pregunta"></p>
-
-    <div id="respuestas"></div>
-
-    <p id="puntuacion">
-        Puntos: 0
-    </p>
-
-</section>
-
-
-<!-- ===== PIE ===== -->
-
-<footer>
-
-    <h2>💙🤍 MÁLAGA CF 🤍💙</h2>
-
-    <p>
-        🐟 ¡SIEMPRE MÁLAGA! ⚽
-    </p>
-
-</footer>
-
-
-<!-- ===== JAVASCRIPT ===== -->
-
-<script>
-
-
-/* BOTÓN VAMOS MÁLAGA */
-
-function mensaje() {
-
-    alert("💙🤍 ¡VAMOS MÁLAGA! 🤍💙");
-
-}
-
-
-/* ===== QUIZ ===== */
-
-let preguntaActual = 0;
-
-let puntos = 0;
-
-
-const preguntas = [
-
-    {
-        pregunta: "¿Dónde juega el Málaga CF?",
-        respuestas: [
-            "La Cartuja",
-            "La Rosaleda",
-            "El Bernabéu"
-        ],
-        correcta: 1
-    },
-
-
-    {
-        pregunta: "¿Cuál es uno de los apodos del Málaga?",
-        respuestas: [
-            "Los Boquerones",
-            "Los Leones",
-            "Los Vikingos"
-        ],
-        correcta: 0
-    },
-
-
-    {
-        pregunta: "¿De qué ciudad es el Málaga CF?",
-        respuestas: [
-            "Sevilla",
-            "Málaga",
-            "Córdoba"
-        ],
-        correcta: 1
-    },
-
-
-    {
-        pregunta: "¿Cómo se llama el estadio del Málaga?",
-        respuestas: [
-            "La Rosaleda",
-            "Mestalla",
-            "San Mamés"
-        ],
-        correcta: 0
-    },
-
-
-    {
-        pregunta: "¿Qué colores identifican al Málaga?",
-        respuestas: [
-            "Rojo y blanco",
-            "Azul y blanco",
-            "Verde y negro"
-        ],
-        correcta: 1
-    },
-
-
-    {
-        pregunta: "¿Qué deporte practica el Málaga CF?",
-        respuestas: [
-            "Baloncesto",
-            "Fútbol",
-            "Tenis"
-        ],
-        correcta: 1
-    },
-
-
-    {
-        pregunta: "¿Cómo se llama a los aficionados del Málaga?",
-        respuestas: [
-            "Malaguistas",
-            "Madrileños",
-            "Bilbaínos"
-        ],
-        correcta: 0
-    },
-
-
-    {
-        pregunta: "¿Qué animal aparece en el apodo del Málaga?",
-        respuestas: [
-            "🐟 Boquerón",
-            "🦁 León",
-            "🐯 Tigre"
-        ],
-        correcta: 0
-    },
-
-
-    {
-        pregunta: "¿Qué equipo queremos que gane?",
-        respuestas: [
-            "Málaga CF",
-            "Otro equipo",
-            "Ninguno"
-        ],
-        correcta: 0
-    },
-
-
-    {
-        pregunta: "¿Cuál es nuestro grito?",
-        respuestas: [
-            "¡VAMOS MÁLAGA!",
-            "¡VAMOS MADRID!",
-            "¡VAMOS SEVILLA!"
-        ],
-        correcta: 0
-    }
-
-];
-
-
-function mostrarPregunta() {
-
-    const pregunta =
-        preguntas[preguntaActual];
-
-
-    document.getElementById("pregunta").innerText =
-        "Pregunta " +
-        (preguntaActual + 1) +
-        "/10: " +
-        pregunta.pregunta;
-
-
-    const contenedor =
-        document.getElementById("respuestas");
-
-
-    contenedor.innerHTML = "";
-
-
-    pregunta.respuestas.forEach(
-        (respuesta, indice) => {
-
-
-        const boton =
-            document.createElement("button");
-
-
-        boton.innerText = respuesta;
-
-
-        boton.onclick = function() {
-
-            comprobar(indice);
-
-        };
-
-
-        contenedor.appendChild(boton);
-
-    });
-
-}
-
-
-function comprobar(indice) {
-
-
-    if (
-        indice ===
-        preguntas[preguntaActual].correcta
-    ) {
-
-        puntos++;
-
-        alert("🎉 ¡CORRECTO! 💙🤍");
-
-    } else {
-
-        alert("❌ ¡FALLASTE! 😅");
-
-    }
-
-
-    preguntaActual++;
-
-
-    document.getElementById(
-        "puntuacion"
-    ).innerText =
-        "Puntos: " + puntos;
-
-
-    if (
-        preguntaActual <
-        preguntas.length
-    ) {
-
-        mostrarPregunta();
-
-    } else {
-
-
-        document.getElementById(
-            "pregunta"
-        ).innerText =
-            "🏆 ¡QUIZ TERMINADO!";
-
-
-        document.getElementById(
-            "respuestas"
-        ).innerHTML =
-
-            "<h2>Has conseguido " +
-            puntos +
-            " de 10 puntos 💙🤍</h2>" +
-
-            "<button onclick='reiniciar()'>" +
-            "🔄 Jugar otra vez" +
-            "</button>";
-
-    }
-
-}
-
-
-function reiniciar() {
-
-    preguntaActual = 0;
-
-    puntos = 0;
-
-
-    document.getElementById(
-        "puntuacion"
-    ).innerText =
-        "Puntos: 0";
-
-
-    mostrarPregunta();
-
-}
-
-
-/* EMPEZAR QUIZ */
-
-mostrarPregunta();
-
-</script>
-
-
-
-<script>
-async function cargarResultadosMalaga() {
-
-    const contenedor = document.getElementById("resultadosMalaga");
-
-    try {
-
-        const ligas = ["esp.1", "esp.2"];
-        let partidos = [];
-
-        for (const liga of ligas) {
-
-            const url =
-                "https://site.api.espn.com/apis/site/v2/sports/soccer/"
-                + liga
-                + "/teams/99/schedule";
-
-            const respuesta = await fetch(url);
-            const datos = await respuesta.json();
-
-            if (datos.events) {
-                partidos = partidos.concat(datos.events);
-            }
-        }
-
-        if (partidos.length === 0) {
-            contenedor.innerHTML =
-                "<p>😕 No se encontraron partidos del Málaga.</p>";
-            return;
-        }
-
-        contenedor.innerHTML = "";
-
-        partidos.slice(0, 10).forEach(partido => {
-
-            const equipos =
-                partido.competitions[0].competitors;
-
-            const local =
-                equipos.find(e => e.homeAway === "home");
-
-            const visitante =
-                equipos.find(e => e.homeAway === "away");
-
-         const marcadorLocal = local.score?.displayValue ?? "-";
-const marcadorVisitante = visitante.score?.displayValue ?? "-";
-            const tarjeta =
-                document.createElement("div");
-
-            tarjeta.className = "noticia";
-
-            tarjeta.innerHTML = `
-                <h3>
-                    ⚽ ${local.team.displayName}
-                    ${marcadorLocal} - ${marcadorVisitante}
-                    ${visitante.team.displayName}
-                </h3>
-            `;
-
-            contenedor.appendChild(tarjeta);
-        });
-
-    } catch (error) {
-
-        contenedor.innerHTML =
-            "<p>❌ No se pudieron cargar los resultados.</p>";
-
-    }
-}
-
-cargarResultadosMalaga();
-</script>
-<script>
 async function cargarClasificacionMalaga() {
 
-    const contenedor = document.getElementById("tablaClasificacion");
+    const contenedor =
+        document.getElementById("tablaClasificacion");
 
     try {
 
-        const ligas = ["esp.1", "esp.2"];
+        const ligas = ["esp.1", "esp.2", "esp.3"];
+
         let tablaEncontrada = null;
 
         for (const liga of ligas) {
 
-            const url =
-                "https://site.api.espn.com/apis/site/v2/sports/soccer/"
-                + liga + "/standings";
+            try {
 
-            const respuesta = await fetch(url);
-            const datos = await respuesta.json();
+                const url =
+                    "https://site.api.espn.com/apis/site/v2/sports/soccer/"
+                    + liga + "/standings";
 
-            if (datos.children) {
+                const respuesta = await fetch(url);
+                const datos = await respuesta.json();
+
+                if (!datos.children) continue;
 
                 for (const grupo of datos.children) {
 
-                    if (grupo.standings) {
+                    if (!grupo.standings) continue;
 
-                        const equipos = grupo.standings.entries;
+                    const equipos =
+                        grupo.standings.entries || [];
 
-                        const malaga = equipos.find(e =>
-                            e.team.displayName
-                                .toLowerCase()
-                                .includes("malaga")
-                            ||
-                            e.team.displayName
-                                .toLowerCase()
-                                .includes("málaga")
-                        );
+                    const malaga = equipos.find(e => {
 
-                        if (malaga) {
-                            tablaEncontrada = grupo.standings;
-                            break;
-                        }
+                        const nombre =
+                            e.team?.displayName?.toLowerCase() || "";
+
+                        return nombre.includes("malaga")
+                            || nombre.includes("málaga");
+
+                    });
+
+                    if (malaga) {
+
+                        tablaEncontrada =
+                            grupo.standings;
+
+                        break;
                     }
                 }
-            }
 
-            if (tablaEncontrada) break;
+                if (tablaEncontrada) break;
+
+            } catch (error) {
+
+                console.log(
+                    "No se pudo consultar " + liga
+                );
+
+            }
         }
 
         if (!tablaEncontrada) {
+
             contenedor.innerHTML =
                 "<p>😕 No se encontró la clasificación del Málaga.</p>";
+
             return;
         }
 
-        const equipos = tablaEncontrada.entries;
+        const equipos =
+            tablaEncontrada.entries || [];
 
         contenedor.innerHTML = "";
 
         equipos.forEach((equipo, indice) => {
 
-            const nombre = equipo.team.displayName;
+            const nombre =
+                equipo.team?.displayName || "Equipo";
 
             const puntos =
-                equipo.stats.find(s => s.name === "points")?.value ?? 0;
+                equipo.stats?.find(
+                    s => s.name === "points"
+                )?.value ?? 0;
 
             const partidos =
-                equipo.stats.find(s => s.name === "gamesPlayed")?.value ?? 0;
+                equipo.stats?.find(
+                    s => s.name === "gamesPlayed"
+                )?.value ?? 0;
 
-            const tarjeta = document.createElement("div");
+            const tarjeta =
+                document.createElement("div");
 
             tarjeta.className = "noticia";
 
@@ -941,6 +467,7 @@ async function cargarClasificacionMalaga() {
             `;
 
             contenedor.appendChild(tarjeta);
+
         });
 
     } catch (error) {
@@ -952,6 +479,7 @@ async function cargarClasificacionMalaga() {
 }
 
 cargarClasificacionMalaga();
+
 </script>
 </body>
 
