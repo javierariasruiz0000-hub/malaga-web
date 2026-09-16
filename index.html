@@ -482,37 +482,61 @@ function cerrarNoticia(boton) {
     </div>
 
 </section>
-  <script>
+ <script>
 async function cargarClasificacionMalaga() {
 
     const contenedor = document.getElementById("tablaClasificacion");
 
     try {
 
-        const url =
-            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/standings";
+        const ligas = ["esp.1", "esp.2"];
+        let tablaEncontrada = null;
 
-        const respuesta = await fetch(url);
-        const datos = await respuesta.json();
+        for (const liga of ligas) {
 
-        let tabla = null;
+            const url =
+                "https://site.api.espn.com/apis/site/v2/sports/soccer/"
+                + liga + "/standings";
 
-        if (datos.children) {
-            for (const grupo of datos.children) {
-                if (grupo.standings) {
-                    tabla = grupo.standings;
-                    break;
+            const respuesta = await fetch(url);
+            const datos = await respuesta.json();
+
+            if (datos.children) {
+
+                for (const grupo of datos.children) {
+
+                    if (grupo.standings) {
+
+                        const equipos = grupo.standings.entries;
+
+                        const malaga = equipos.find(e =>
+                            e.team.displayName
+                                .toLowerCase()
+                                .includes("malaga")
+                            ||
+                            e.team.displayName
+                                .toLowerCase()
+                                .includes("málaga")
+                        );
+
+                        if (malaga) {
+                            tablaEncontrada = grupo.standings;
+                            break;
+                        }
+                    }
                 }
             }
+
+            if (tablaEncontrada) break;
         }
 
-        if (!tabla) {
+        if (!tablaEncontrada) {
             contenedor.innerHTML =
-                "<p>😕 No se pudo encontrar la clasificación.</p>";
+                "<p>😕 No se encontró la clasificación del Málaga.</p>";
             return;
         }
 
-        const equipos = tabla.entries;
+        const equipos = tablaEncontrada.entries;
 
         contenedor.innerHTML = "";
 
@@ -548,7 +572,7 @@ async function cargarClasificacionMalaga() {
 }
 
 cargarClasificacionMalaga();
-</script>  
+</script>
     <!-- ===== CLASIFICACIÓN ===== -->
 <section class="seccion" id="clasificacion">
 
