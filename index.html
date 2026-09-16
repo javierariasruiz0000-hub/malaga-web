@@ -391,13 +391,82 @@ footer {
 </section>
 
 <script>
+```javascript
 const resultados = [
-    ["RC Deportivo", "1", "1", "Málaga CF"],
-    ["Real Madrid", "4", "0", "Málaga CF"],
-    ["Málaga CF", "0", "0", "Levante UD"],
-    ["Celta", "1", "1", "Málaga CF"],
-    ["Málaga CF", "-", "-", "Villarreal CF"]
+    {
+        local: "RC Deportivo",
+        escudoLocal: "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+        golesLocal: "1",
+        golesVisitante: "1",
+        visitante: "Málaga CF",
+        escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+        fecha: "30/08/2026"
+    },
+    {
+        local: "Real Madrid",
+        escudoLocal: "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
+        golesLocal: "4",
+        golesVisitante: "0",
+        visitante: "Málaga CF",
+        escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+        fecha: "06/09/2026"
+    },
+    {
+        local: "Málaga CF",
+        escudoLocal: "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+        golesLocal: "0",
+        golesVisitante: "0",
+        visitante: "Levante UD",
+        escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
+        fecha: "12/09/2026"
+    },
+    {
+        local: "Celta",
+        escudoLocal: "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
+        golesLocal: "1",
+        golesVisitante: "1",
+        visitante: "Málaga CF",
+        escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+        fecha: "15/09/2026"
+    },
+    {
+        local: "Málaga CF",
+        escudoLocal: "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+        golesLocal: "-",
+        golesVisitante: "-",
+        visitante: "Villarreal CF",
+        escudoVisitante: "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
+        fecha: "17/09/2026 · 21:30"
+    }
 ];
+
+const contenedor = document.getElementById("resultadosMalaga");
+
+contenedor.innerHTML = resultados.map(partido => `
+    <div class="noticia" style="text-align:center;">
+        <p>📅 ${partido.fecha}</p>
+
+        <div style="display:flex; justify-content:center; align-items:center; gap:15px;">
+
+            <div>
+                <img src="${partido.escudoLocal}"
+                     style="width:50px;height:50px;object-fit:contain;">
+                <p>${partido.local}</p>
+            </div>
+
+            <h2>${partido.golesLocal} - ${partido.golesVisitante}</h2>
+
+            <div>
+                <img src="${partido.escudoVisitante}"
+                     style="width:50px;height:50px;object-fit:contain;">
+                <p>${partido.visitante}</p>
+            </div>
+
+        </div>
+    </div>
+`).join("");
+```
+
 
 const contenedor = document.getElementById("resultadosMalaga");
 
