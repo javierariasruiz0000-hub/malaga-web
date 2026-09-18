@@ -481,31 +481,156 @@ footer {
 
 
 
-</script>
 <script>
 
-const clasificacion = [
-    ["1", "FC Barcelona", "15"],
-    ["2", "Real Madrid", "15"],
-    ["3", "Real Betis", "12"],
-    ["4", "Atlético de Madrid", "10"],
-    ["5", "Sevilla FC", "10"],
-    ["6", "Athletic Club", "9"],
-    ["7", "Rayo Vallecano", "8"],
-    ["8", "Real Sociedad", "7"],
-    ["9", "Getafe CF", "7"],
-    ["10", "RCD Espanyol", "7"],
-    ["11", "Levante UD", "6"],
-    ["12", "Valencia CF", "6"],
-    ["13", "Celta", "5"],
-    ["14", "Osasuna", "5"],
-    ["15", "Villarreal CF", "5"],
-    ["16", "Deportivo Alavés", "4"],
-    ["17", "Elche CF", "4"],
-    ["18", "Mallorca", "3"],
-    ["19", "Málaga CF", "3"],
-    ["20", "Girona FC", "2"]
-];
+async function cargarClasificacion() {
+
+    const tabla = document.getElementById("tablaClasificacion");
+
+    tabla.innerHTML = "<p>⏳ Cargando clasificación...</p>";
+
+    try {
+
+        const respuesta = await fetch(
+            "https://site.api.espn.com/apis/v2/sports/soccer/esp.1/standings"
+        );
+
+        const datos = await respuesta.json();
+
+        const grupo = datos.children[0];
+        const equipos = grupo.standings.entries;
+
+        let html = `
+            <div style="overflow-x:auto;">
+
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    background:white;
+                    color:#111;
+                    border-radius:10px;
+                    overflow:hidden;
+                ">
+
+                    <thead>
+                        <tr style="
+                            background:#0066b3;
+                            color:white;
+                        ">
+                            <th>POS</th>
+                            <th>EQUIPO</th>
+                            <th>PTS</th>
+                            <th>PJ</th>
+                            <th>PG</th>
+                            <th>PE</th>
+                            <th>PP</th>
+                            <th>GF</th>
+                            <th>GC</th>
+                            <th>DG</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+        `;
+
+        equipos.forEach((entrada, indice) => {
+
+            const equipo = entrada.team;
+
+            const estadisticas = {};
+
+            entrada.stats.forEach(stat => {
+                estadisticas[stat.name] = stat.value;
+            });
+
+            html += `
+                <tr style="
+                    border-bottom:1px solid #ddd;
+                ">
+
+                    <td style="text-align:center;">
+                        <strong>${indice + 1}</strong>
+                    </td>
+
+                    <td>
+                        <strong>${equipo.displayName}</strong>
+                    </td>
+
+                    <td style="text-align:center;">
+                        <strong>${estadisticas.points ?? 0}</strong>
+                    </td>
+
+                    <td style="text-align:center;">
+                        ${estadisticas.gamesPlayed ?? 0}
+                    </td>
+
+                    <td style="text-align:center;">
+                        ${estadisticas.wins ?? 0}
+                    </td>
+
+                    <td style="text-align:center;">
+                        ${estadisticas.ties ?? 0}
+                    </td>
+
+                    <td style="text-align:center;">
+                        ${estadisticas.losses ?? 0}
+                    </td>
+
+                    <td style="text-align:center;">
+                        ${estadisticas.pointsFor ?? 0}
+                    </td>
+
+                    <td style="text-align:center;">
+                        ${estadisticas.pointsAgainst ?? 0}
+                    </td>
+
+                    <td style="text-align:center;">
+                        ${estadisticas.pointDifferential ?? 0}
+                    </td>
+
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <p style="
+                text-align:center;
+                margin-top:15px;
+            ">
+                🔄 Clasificación actualizada automáticamente
+            </p>
+        `;
+
+        tabla.innerHTML = html;
+
+    } catch (error) {
+
+        console.error(error);
+
+        tabla.innerHTML = `
+            <p>
+                ⚠️ No se pudo cargar la clasificación.
+                Inténtalo de nuevo más tarde.
+            </p>
+        `;
+    }
+}
+
+
+// Cargar clasificación al abrir la página
+cargarClasificacion();
+
+
+// Actualizar cada 15 minutos
+setInterval(cargarClasificacion, 15 * 60 * 1000);
+
+</script>
     
 const tabla = document.getElementById("tablaClasificacion");
 
