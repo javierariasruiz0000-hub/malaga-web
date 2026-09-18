@@ -483,6 +483,8 @@ footer {
 
 <script>
 
+<script>
+
 async function cargarClasificacion() {
 
     const tabla = document.getElementById("tablaClasificacion");
@@ -497,8 +499,7 @@ async function cargarClasificacion() {
 
         const datos = await respuesta.json();
 
-        const grupo = datos.children[0];
-        const equipos = grupo.standings.entries;
+        const equipos = datos.children[0].standings.entries;
 
         let html = `
             <div style="overflow-x:auto;">
@@ -508,8 +509,6 @@ async function cargarClasificacion() {
                     border-collapse:collapse;
                     background:white;
                     color:#111;
-                    border-radius:10px;
-                    overflow:hidden;
                 ">
 
                     <thead>
@@ -517,7 +516,7 @@ async function cargarClasificacion() {
                             background:#0066b3;
                             color:white;
                         ">
-                            <th>POS</th>
+                            <th>POS.</th>
                             <th>EQUIPO</th>
                             <th>PTS</th>
                             <th>PJ</th>
@@ -603,7 +602,7 @@ async function cargarClasificacion() {
                 text-align:center;
                 margin-top:15px;
             ">
-                🔄 Clasificación actualizada automáticamente
+                🔄 Se actualiza automáticamente
             </p>
         `;
 
@@ -616,19 +615,16 @@ async function cargarClasificacion() {
         tabla.innerHTML = `
             <p>
                 ⚠️ No se pudo cargar la clasificación.
-                Inténtalo de nuevo más tarde.
             </p>
         `;
     }
 }
 
-
-// Cargar clasificación al abrir la página
 cargarClasificacion();
 
-
-// Actualizar cada 15 minutos
 setInterval(cargarClasificacion, 15 * 60 * 1000);
+
+</script>
 
 </script>
     
