@@ -372,8 +372,8 @@ async function cargarResultados() {
     try {
 
         const respuesta = await fetch(
-            "resultados.json?actualizado=" + Date.now()
-        );
+    "https://raw.githubusercontent.com/javierariasruiz0000-hub/malaga-web/main/resultados.json?actualizado=" + Date.now()
+);
 
         if (!respuesta.ok) {
             throw new Error("No se pudo cargar resultados.json");
