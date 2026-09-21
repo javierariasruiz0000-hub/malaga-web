@@ -409,13 +409,10 @@ async function cargarResultados() {
 
             let marcador = "-";
 
-            if (
-                malaga.score !== undefined &&
-                rival.score !== undefined
-            ) {
-                marcador =
-                    `${rival.score} - ${malaga.score}`;
-            }
+if (malaga.score && rival.score) {
+    marcador =
+        `${rival.score.displayValue} - ${malaga.score.displayValue}`;
+}
 
             partidos.push({
 
@@ -425,7 +422,8 @@ async function cargarResultados() {
                     rival.team.displayName,
 
                 escudoRival:
-                    rival.team.logo,
+    rival.team.logos?.[0]?.href ||
+    "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
 
                 escudoMalaga:
                     malaga.team.logo ||
