@@ -1,0 +1,26 @@
+name: Actualizar resultados Málaga
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Obtener resultados
+        run: |
+          curl -L "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=20260901-20261231" -o resultados.json
+
+      - name: Guardar resultados
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add resultados.json
+          git diff --cached --quiet || git commit -m "Actualizar resultados"
+          git push
