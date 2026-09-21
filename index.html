@@ -482,7 +482,84 @@ footer {
 
 
 <script>
+const clasificacion = [
+    ["1", "FC Barcelona", "18"],
+    ["2", "Real Madrid", "15"],
+    ["3", "Real Betis", "15"],
+    ["4", "Atlético de Madrid", "13"],
+    ["5", "Sevilla FC", "13"],
+    ["6", "Deportivo Alavés", "10"],
+    ["7", "RC Deportivo", "9"],
+    ["8", "RCD Espanyol", "7"],
+    ["9", "Athletic Club", "7"],
+    ["10", "Racing Santander", "7"],
+    ["11", "Rayo Vallecano", "7"],
+    ["12", "Real Sociedad", "7"],
+    ["13", "Osasuna", "7"],
+    ["14", "Villarreal CF", "5"],
+    ["15", "Levante UD", "5"],
+    ["16", "Getafe CF", "5"],
+    ["17", "Málaga CF", "1"],
+    ["18", "Celta de Vigo", "4"],
+    ["19", "Mallorca", "3"],
+    ["20", "Elche CF", "2"]
+];
 
+const tabla = document.getElementById("tablaClasificacion");
+
+let html = `
+<div style="overflow-x:auto;">
+<table style="
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    color:#111;
+">
+<thead>
+<tr style="
+    background:#0066b3;
+    color:white;
+">
+    <th>POS.</th>
+    <th>EQUIPO</th>
+    <th>PTS</th>
+</tr>
+</thead>
+<tbody>
+`;
+
+clasificacion.forEach(equipo => {
+
+    html += `
+    <tr style="border-bottom:1px solid #ddd;">
+
+        <td style="text-align:center;">
+            <strong>${equipo[0]}</strong>
+        </td>
+
+        <td>
+            <strong>${equipo[1]}</strong>
+        </td>
+
+        <td style="text-align:center;">
+            <strong>${equipo[2]}</strong>
+        </td>
+
+    </tr>
+    `;
+});
+
+html += `
+</tbody>
+</table>
+</div>
+
+<p style="text-align:center;">
+🔄 Clasificación actualizada
+</p>
+`;
+
+tabla.innerHTML = html;
 <script>
 
 <script>
