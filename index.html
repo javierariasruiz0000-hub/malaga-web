@@ -519,87 +519,6 @@ footer {
 
 
 <script>
-const clasificacion = [
-    ["1", "FC Barcelona", "18"],
-    ["2", "Real Madrid", "15"],
-    ["3", "Real Betis", "15"],
-    ["4", "Atlético de Madrid", "13"],
-    ["5", "Sevilla FC", "13"],
-    ["6", "Deportivo Alavés", "10"],
-    ["7", "RC Deportivo", "9"],
-    ["8", "RCD Espanyol", "7"],
-    ["9", "Athletic Club", "7"],
-    ["10", "Racing Santander", "7"],
-    ["11", "Rayo Vallecano", "7"],
-    ["12", "Real Sociedad", "7"],
-    ["13", "Osasuna", "7"],
-    ["14", "Villarreal CF", "5"],
-    ["15", "Levante UD", "5"],
-    ["16", "Getafe CF", "5"],
-    ["17", "Málaga CF", "1"],
-    ["18", "Celta de Vigo", "4"],
-    ["19", "Mallorca", "3"],
-    ["20", "Elche CF", "2"]
-];
-
-const tabla = document.getElementById("tablaClasificacion");
-
-let html = `
-<div style="overflow-x:auto;">
-<table style="
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    color:#111;
-">
-<thead>
-<tr style="
-    background:#0066b3;
-    color:white;
-">
-    <th>POS.</th>
-    <th>EQUIPO</th>
-    <th>PTS</th>
-</tr>
-</thead>
-<tbody>
-`;
-
-clasificacion.forEach(equipo => {
-
-    html += `
-    <tr style="border-bottom:1px solid #ddd;">
-
-        <td style="text-align:center;">
-            <strong>${equipo[0]}</strong>
-        </td>
-
-        <td>
-            <strong>${equipo[1]}</strong>
-        </td>
-
-        <td style="text-align:center;">
-            <strong>${equipo[2]}</strong>
-        </td>
-
-    </tr>
-    `;
-});
-
-html += `
-</tbody>
-</table>
-</div>
-
-<p style="text-align:center;">
-🔄 Clasificación actualizada
-</p>
-`;
-
-tabla.innerHTML = html;
-<script>
-
-<script>
 
 async function cargarClasificacion() {
 
@@ -613,101 +532,156 @@ async function cargarClasificacion() {
             "https://site.api.espn.com/apis/v2/sports/soccer/esp.1/standings"
         );
 
+        if (!respuesta.ok) {
+            throw new Error("No se pudo conectar con ESPN");
+        }
+
         const datos = await respuesta.json();
 
         const entradas = datos.children[0].standings.entries;
 
         let html = `
             <div style="overflow-x:auto;">
-            <table style="
-                width:100%;
-                border-collapse:collapse;
-                background:white;
-                color:#111;
-            ">
 
-            <thead>
-                <tr style="
-                    background:#0066b3;
-                    color:white;
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    background:white;
+                    color:#111;
+                    border-radius:10px;
+                    overflow:hidden;
                 ">
-                    <th>POS</th>
-                    <th>EQUIPO</th>
-                    <th>PTS</th>
-                    <th>PJ</th>
-                    <th>PG</th>
-                    <th>PE</th>
-                    <th>PP</th>
-                    <th>GF</th>
-                    <th>GC</th>
-                    <th>DG</th>
-                </tr>
-            </thead>
 
-            <tbody>
+                    <thead>
+
+                        <tr style="
+                            background:#0066b3;
+                            color:white;
+                        ">
+
+                            <th>POS.</th>
+                            <th>EQUIPO</th>
+                            <th>PTS</th>
+                            <th>PJ</th>
+                            <th>PG</th>
+                            <th>PE</th>
+                            <th>PP</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
         `;
 
         entradas.forEach((entrada, posicion) => {
 
             const equipo = entrada.team.displayName;
 
-            let puntos = 0;
-            let partidos = 0;
-            let victorias = 0;
-            let empates = 0;
-            let derrotas = 0;
-            let golesFavor = 0;
-            let golesContra = 0;
-            let diferencia = 0;
+            let puntos = "-";
+            let partidos = "-";
+            let victorias = "-";
+            let empates = "-";
+            let derrotas = "-";
 
             entrada.stats.forEach(stat => {
 
-                if (stat.name === "points") puntos = stat.value;
-                if (stat.name === "gamesPlayed") partidos = stat.value;
-                if (stat.name === "wins") victorias = stat.value;
-                if (stat.name === "ties") empates = stat.value;
-                if (stat.name === "losses") derrotas = stat.value;
-                if (stat.name === "pointsFor") golesFavor = stat.value;
-                if (stat.name === "pointsAgainst") golesContra = stat.value;
-                if (stat.name === "pointDifferential") diferencia = stat.value;
+                if (stat.name === "points") {
+                    puntos = stat.value;
+                }
+
+                if (stat.name === "gamesPlayed") {
+                    partidos = stat.value;
+                }
+
+                if (stat.name === "wins") {
+                    victorias = stat.value;
+                }
+
+                if (stat.name === "ties") {
+                    empates = stat.value;
+                }
+
+                if (stat.name === "losses") {
+                    derrotas = stat.value;
+                }
 
             });
 
             html += `
-                <tr style="border-bottom:1px solid #ddd;">
 
-                    <td style="text-align:center;">
+                <tr style="
+                    border-bottom:1px solid #ddd;
+                ">
+
+                    <td style="
+                        text-align:center;
+                        padding:8px;
+                    ">
                         <strong>${posicion + 1}</strong>
                     </td>
 
-                    <td>
+                    <td style="
+                        padding:8px;
+                    ">
                         <strong>${equipo}</strong>
                     </td>
 
-                    <td style="text-align:center;">
+                    <td style="
+                        text-align:center;
+                        padding:8px;
+                    ">
                         <strong>${puntos}</strong>
                     </td>
 
-                    <td style="text-align:center;">${partidos}</td>
-                    <td style="text-align:center;">${victorias}</td>
-                    <td style="text-align:center;">${empates}</td>
-                    <td style="text-align:center;">${derrotas}</td>
-                    <td style="text-align:center;">${golesFavor}</td>
-                    <td style="text-align:center;">${golesContra}</td>
-                    <td style="text-align:center;">${diferencia}</td>
+                    <td style="
+                        text-align:center;
+                        padding:8px;
+                    ">
+                        ${partidos}
+                    </td>
+
+                    <td style="
+                        text-align:center;
+                        padding:8px;
+                    ">
+                        ${victorias}
+                    </td>
+
+                    <td style="
+                        text-align:center;
+                        padding:8px;
+                    ">
+                        ${empates}
+                    </td>
+
+                    <td style="
+                        text-align:center;
+                        padding:8px;
+                    ">
+                        ${derrotas}
+                    </td>
 
                 </tr>
+
             `;
         });
 
         html += `
-            </tbody>
-            </table>
+
+                    </tbody>
+
+                </table>
+
             </div>
 
-            <p style="text-align:center;">
+            <p style="
+                text-align:center;
+                margin-top:15px;
+            ">
                 🔄 Clasificación actualizada automáticamente
             </p>
+
         `;
 
         tabla.innerHTML = html;
@@ -716,16 +690,25 @@ async function cargarClasificacion() {
 
         console.error(error);
 
-        tabla.innerHTML =
-            "<p>⚠️ Error al cargar la clasificación.</p>";
+        tabla.innerHTML = `
+
+            <p style="text-align:center;">
+                ⚠️ No se pudo cargar la clasificación.
+            </p>
+
+        `;
+
     }
+
 }
 
+
+// Cargar al abrir la página
 cargarClasificacion();
 
-setInterval(cargarClasificacion, 15 * 60 * 1000);
 
-</script>
+// Actualizar cada 15 minutos
+setInterval(cargarClasificacion, 15 * 60 * 1000);
 
 </script>
     
