@@ -485,6 +485,8 @@ footer {
 
 <script>
 
+<script>
+
 async function cargarClasificacion() {
 
     const tabla = document.getElementById("tablaClasificacion");
@@ -499,110 +501,98 @@ async function cargarClasificacion() {
 
         const datos = await respuesta.json();
 
-        const equipos = datos.children[0].standings.entries;
+        const entradas = datos.children[0].standings.entries;
 
         let html = `
             <div style="overflow-x:auto;">
+            <table style="
+                width:100%;
+                border-collapse:collapse;
+                background:white;
+                color:#111;
+            ">
 
-                <table style="
-                    width:100%;
-                    border-collapse:collapse;
-                    background:white;
-                    color:#111;
+            <thead>
+                <tr style="
+                    background:#0066b3;
+                    color:white;
                 ">
+                    <th>POS</th>
+                    <th>EQUIPO</th>
+                    <th>PTS</th>
+                    <th>PJ</th>
+                    <th>PG</th>
+                    <th>PE</th>
+                    <th>PP</th>
+                    <th>GF</th>
+                    <th>GC</th>
+                    <th>DG</th>
+                </tr>
+            </thead>
 
-                    <thead>
-                        <tr style="
-                            background:#0066b3;
-                            color:white;
-                        ">
-                            <th>POS.</th>
-                            <th>EQUIPO</th>
-                            <th>PTS</th>
-                            <th>PJ</th>
-                            <th>PG</th>
-                            <th>PE</th>
-                            <th>PP</th>
-                            <th>GF</th>
-                            <th>GC</th>
-                            <th>DG</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
+            <tbody>
         `;
 
-        equipos.forEach((entrada, indice) => {
+        entradas.forEach((entrada, posicion) => {
 
-            const equipo = entrada.team;
+            const equipo = entrada.team.displayName;
 
-            const estadisticas = {};
+            let puntos = 0;
+            let partidos = 0;
+            let victorias = 0;
+            let empates = 0;
+            let derrotas = 0;
+            let golesFavor = 0;
+            let golesContra = 0;
+            let diferencia = 0;
 
             entrada.stats.forEach(stat => {
-                estadisticas[stat.name] = stat.value;
+
+                if (stat.name === "points") puntos = stat.value;
+                if (stat.name === "gamesPlayed") partidos = stat.value;
+                if (stat.name === "wins") victorias = stat.value;
+                if (stat.name === "ties") empates = stat.value;
+                if (stat.name === "losses") derrotas = stat.value;
+                if (stat.name === "pointsFor") golesFavor = stat.value;
+                if (stat.name === "pointsAgainst") golesContra = stat.value;
+                if (stat.name === "pointDifferential") diferencia = stat.value;
+
             });
 
             html += `
-                <tr style="
-                    border-bottom:1px solid #ddd;
-                ">
+                <tr style="border-bottom:1px solid #ddd;">
 
                     <td style="text-align:center;">
-                        <strong>${indice + 1}</strong>
+                        <strong>${posicion + 1}</strong>
                     </td>
 
                     <td>
-                        <strong>${equipo.displayName}</strong>
+                        <strong>${equipo}</strong>
                     </td>
 
                     <td style="text-align:center;">
-                        <strong>${estadisticas.points ?? 0}</strong>
+                        <strong>${puntos}</strong>
                     </td>
 
-                    <td style="text-align:center;">
-                        ${estadisticas.gamesPlayed ?? 0}
-                    </td>
-
-                    <td style="text-align:center;">
-                        ${estadisticas.wins ?? 0}
-                    </td>
-
-                    <td style="text-align:center;">
-                        ${estadisticas.ties ?? 0}
-                    </td>
-
-                    <td style="text-align:center;">
-                        ${estadisticas.losses ?? 0}
-                    </td>
-
-                    <td style="text-align:center;">
-                        ${estadisticas.pointsFor ?? 0}
-                    </td>
-
-                    <td style="text-align:center;">
-                        ${estadisticas.pointsAgainst ?? 0}
-                    </td>
-
-                    <td style="text-align:center;">
-                        ${estadisticas.pointDifferential ?? 0}
-                    </td>
+                    <td style="text-align:center;">${partidos}</td>
+                    <td style="text-align:center;">${victorias}</td>
+                    <td style="text-align:center;">${empates}</td>
+                    <td style="text-align:center;">${derrotas}</td>
+                    <td style="text-align:center;">${golesFavor}</td>
+                    <td style="text-align:center;">${golesContra}</td>
+                    <td style="text-align:center;">${diferencia}</td>
 
                 </tr>
             `;
         });
 
         html += `
-                    </tbody>
-
-                </table>
-
+            </tbody>
+            </table>
             </div>
 
-            <p style="
-                text-align:center;
-                margin-top:15px;
-            ">
-                🔄 Se actualiza automáticamente
+            <p style="text-align:center;">
+                🔄 Clasificación actualizada automáticamente
             </p>
         `;
 
@@ -612,11 +602,8 @@ async function cargarClasificacion() {
 
         console.error(error);
 
-        tabla.innerHTML = `
-            <p>
-                ⚠️ No se pudo cargar la clasificación.
-            </p>
-        `;
+        tabla.innerHTML =
+            "<p>⚠️ Error al cargar la clasificación.</p>";
     }
 }
 
