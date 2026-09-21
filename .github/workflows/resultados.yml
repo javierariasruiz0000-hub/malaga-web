@@ -15,7 +15,7 @@ jobs:
 
       - name: Obtener resultados
         run: |
-          curl -L "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=20260901-20261231" -o resultados.json
+         curl -L "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/teams/99/schedule" -o resultados.json
 
       - name: Guardar resultados
         run: |
