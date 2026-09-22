@@ -589,7 +589,158 @@ setInterval(
     <div id="listaNoticias"></div>
 
 </section>
+<script>
 
+async function cargarNoticias() {
+
+    const lista = document.getElementById("listaNoticias");
+    const estado = document.getElementById("estadoNoticias");
+
+    try {
+
+        const respuesta = await fetch(
+            "https://api.rss2json.com/v1/api.json?rss_url=https://sportdirectradio.es/feed/"
+        );
+
+        if (!respuesta.ok) {
+            throw new Error("Error al cargar noticias");
+        }
+
+        const datos = await respuesta.json();
+
+        const noticias = datos.items
+            .filter(noticia => {
+
+                const texto =
+                    (noticia.title + " " + noticia.description)
+                    .toLowerCase();
+
+                return texto.includes("málaga") ||
+                       texto.includes("malaga");
+
+            })
+            .slice(0, 6);
+
+        if (noticias.length === 0) {
+
+            estado.textContent =
+                "⚠️ No se han encontrado noticias del Málaga.";
+
+            return;
+
+        }
+
+        estado.textContent =
+            "🔄 Noticias actualizadas automáticamente";
+
+        let html = "";
+
+        noticias.forEach(noticia => {
+
+            const fecha =
+                new Date(noticia.pubDate)
+                .toLocaleDateString("es-ES");
+
+            html += `
+
+                <div class="noticia">
+
+                    <h3>
+                        📰 ${noticia.title}
+                    </h3>
+
+                    <p>
+                        📅 ${fecha}
+                    </p>
+
+                    <button onclick="mostrarNoticia(this)">
+                        Leer noticia
+                    </button>
+
+                    <div
+                        class="contenidoNoticia"
+                        style="display:none;"
+                    >
+
+                        <p>
+                            ${noticia.description}
+                        </p>
+
+                        <a
+                            href="${noticia.link}"
+                            target="_blank"
+                        >
+                            Leer noticia completa
+                        </a>
+
+                        <br><br>
+
+                        <button onclick="cerrarNoticia(this)">
+                            Cerrar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+        lista.innerHTML = html;
+
+    } catch (error) {
+
+        console.error(error);
+
+        estado.textContent =
+            "⚠️ No se pudieron cargar las noticias.";
+
+    }
+
+}
+
+
+function mostrarNoticia(boton) {
+
+    const noticia = boton.parentElement;
+
+    const contenido =
+        noticia.querySelector(".contenidoNoticia");
+
+    contenido.style.display = "block";
+
+    boton.style.display = "none";
+
+}
+
+
+function cerrarNoticia(boton) {
+
+    const noticia =
+        boton.parentElement.parentElement;
+
+    const contenido =
+        noticia.querySelector(".contenidoNoticia");
+
+    const botonLeer =
+        noticia.querySelector("button");
+
+    contenido.style.display = "none";
+
+    botonLeer.style.display = "inline-block";
+
+}
+
+
+cargarNoticias();
+
+setInterval(
+    cargarNoticias,
+    15 * 60 * 1000
+);
+
+</script>
 
 
 
