@@ -367,13 +367,13 @@ async function cargarResultados() {
 
     const contenedor = document.getElementById("resultadosMalaga");
 
-    contenedor.innerHTML = "<p>⏳ Cargando resultados...</p>";
+    contenedor.innerHTML = "<p>⏳ Cargando partidos del Málaga...</p>";
 
     try {
 
         const respuesta = await fetch(
-    "https://raw.githubusercontent.com/javierariasruiz0000-hub/malaga-web/main/resultados.json?actualizado=" + Date.now()
-);
+            "https://raw.githubusercontent.com/javierariasruiz0000-hub/malaga-web/main/resultados.json?actualizado=" + Date.now()
+        );
 
         if (!respuesta.ok) {
             throw new Error("No se pudo cargar resultados.json");
@@ -381,26 +381,26 @@ async function cargarResultados() {
 
         const datos = await respuesta.json();
 
+        const eventos = datos.events || [];
+
         let partidos = [];
 
-        datos.events.forEach(evento => {
+        eventos.forEach(evento => {
 
-            const competicion = evento.competitions[0];
+            const competicion = evento.competitions?.[0];
 
             if (!competicion) return;
 
-            const equipos = competicion.competitors;
+            const equipos = competicion.competitors || [];
 
             const malaga = equipos.find(equipo =>
-                equipo.team.displayName
-                    .toLowerCase()
-                    .includes("málaga")
+                String(equipo.team?.id) === "99"
             );
 
             if (!malaga) return;
 
             const rival = equipos.find(equipo =>
-                equipo !== malaga
+                String(equipo.team?.id) !== "99"
             );
 
             if (!rival) return;
@@ -409,38 +409,50 @@ async function cargarResultados() {
 
             let marcador = "-";
 
-if (malaga.score && rival.score) {
-    marcador =
-        `${rival.score.displayValue} - ${malaga.score.displayValue}`;
-}
+            if (
+                malaga.score?.displayValue &&
+                rival.score?.displayValue
+            ) {
+
+                marcador =
+                    `${rival.score.displayValue} - ${malaga.score.displayValue}`;
+
+            }
+
+            const escudoRival =
+                rival.team?.logos?.[0]?.href ||
+                rival.team?.logo ||
+                "";
+
+            const escudoMalaga =
+                malaga.team?.logos?.[0]?.href ||
+                malaga.team?.logo ||
+                "https://a.espncdn.com/i/teamlogos/soccer/500/99.png";
 
             partidos.push({
 
                 fecha: fecha,
 
-                rival:
-                    rival.team.displayName,
+                rival: rival.team?.displayName || "Rival",
 
-                escudoRival:
-    rival.team.logos?.[0]?.href ||
-    "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
+                escudoRival: escudoRival,
 
-                escudoMalaga:
-                    malaga.team.logo ||
-                    "https://a.espncdn.com/i/teamlogos/soccer/500/99.png",
+                escudoMalaga: escudoMalaga,
 
-                marcador:
-                    marcador
+                marcador: marcador
 
             });
 
         });
 
+
         partidos.sort((a, b) =>
             b.fecha - a.fecha
         );
 
+
         let html = "";
+
 
         partidos.forEach(partido => {
 
@@ -448,6 +460,7 @@ if (malaga.score && rival.score) {
                 partido.fecha.toLocaleDateString(
                     "es-ES"
                 );
+
 
             const hora =
                 partido.fecha.toLocaleTimeString(
@@ -458,6 +471,7 @@ if (malaga.score && rival.score) {
                     }
                 );
 
+
             html += `
 
                 <div class="noticia resultado-partido">
@@ -466,10 +480,11 @@ if (malaga.score && rival.score) {
 
                         <div>
 
-                            <img
-                                src="${partido.escudoRival}"
-                                width="60"
-                            >
+                            ${
+                                partido.escudoRival
+                                ? `<img src="${partido.escudoRival}" width="60">`
+                                : ""
+                            }
 
                             <p>
                                 <strong>
@@ -539,7 +554,7 @@ if (malaga.score && rival.score) {
 
         contenedor.innerHTML = `
             <p>
-                ⚠️ No se pudieron cargar los resultados.
+                ⚠️ No se pudieron cargar los partidos.
             </p>
         `;
 
@@ -548,11 +563,11 @@ if (malaga.score && rival.score) {
 }
 
 
-// Cargar resultados al abrir la página
+// Cargar partidos al abrir la página
 cargarResultados();
 
 
-// Actualizar cada 15 minutos
+// Comprobar nuevos partidos cada 15 minutos
 setInterval(
     cargarResultados,
     15 * 60 * 1000
