@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resultados Málaga CF</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #001b3d, #0077c8);
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 15px;
+            background: linear-gradient(135deg, #003b7a, #009ee3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        header p {
+            font-size: 18px;
+        }
+
+        .contenedor {
+            max-width: 900px;
+            margin: auto;
+            padding: 25px 15px;
+        }
+
+        .resultado-partido {
+            background: white;
+            color: #001b3d;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+        }
+
+        .equipos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .equipos div {
+            width: 180px;
+        }
+
+        .equipos img {
+            max-width: 60px;
+            height: auto;
+        }
+
+        .equipos h2 {
+            font-size: 28px;
+        }
+
+        .volver {
+            display: inline-block;
+            background: white;
+            color: #003b7a;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .volver:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+
+            .equipos {
+                gap: 10px;
+            }
+
+            .equipos div {
+                width: 120px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>⚽ RESULTADOS DEL MÁLAGA CF ⚽</h1>
+
+        <p>💙🤍 Partidos del Málaga CF 🤍💙</p>
+
+    </header>
+
+
+    <div class="contenedor">
+
+        <a class="volver" href="index.html">
+            ⬅️ Volver al inicio
+        </a>
+
+        <div id="resultadosMalaga">
+
+            <p>⏳ Cargando partidos del Málaga...</p>
+
+        </div>
+
+    </div>
+
+
+<script>
+
+async function cargarResultados() {
+
+    const contenedor =
+        document.getElementById("resultadosMalaga");
+
+    contenedor.innerHTML =
+        "<p>⏳ Cargando partidos del Málaga...</p>";
+
+    try {
+
+        const respuesta = await fetch(
+            "https://raw.githubusercontent.com/javierariasruiz0000-hub/malaga-web/main/resultados.json?actualizado=" + Date.now()
+        );
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudo cargar resultados.json");
+        }
+
+        const datos = await respuesta.json();
+
+        const eventos = datos.events || [];
+
+        let partidos = [];
+
+
+        eventos.forEach(evento => {
+
+            const competicion =
+                evento.competitions?.[0];
+
+            if (!competicion) return;
+
+            const equipos =
+                competicion.competitors || [];
+
+            const malaga =
+                equipos.find(equipo =>
+                    String(equipo.team?.id) === "99"
+                );
+
+            if (!malaga) return;
+
+            const rival =
+                equipos.find(equipo =>
+                    String(equipo.team?.id) !== "99"
+                );
+
+            if (!rival) return;
+
+            const fecha =
+                new Date(evento.date);
+
+            let marcador = "-";
+
+
+            if (
+                malaga.score?.displayValue &&
+                rival.score?.displayValue
+            ) {
+
+                marcador =
+                    `${rival.score.displayValue} - ${malaga.score.displayValue}`;
+
+            }
+
+
+            const escudoRival =
+                rival.team?.logos?.[0]?.href ||
+                rival.team?.logo ||
+                "";
+
+
+            const escudoMalaga =
+                malaga.team?.logos?.[0]?.href ||
+                malaga.team?.logo ||
+                "https://a.espncdn.com/i/teamlogos/soccer/500/99.png";
+
+
+            partidos.push({
+
+                fecha: fecha,
+
+                rival:
+                    rival.team?.displayName ||
+                    "Rival",
+
+                escudoRival:
+                    escudoRival,
+
+                escudoMalaga:
+                    escudoMalaga,
+
+                marcador:
+                    marcador
+
+            });
+
+        });
+
+
+        partidos.sort((a, b) =>
+            b.fecha - a.fecha
+        );
+
+
+        let html = "";
+
+
+        partidos.forEach(partido => {
+
+            const fecha =
+                partido.fecha.toLocaleDateString(
+                    "es-ES"
+                );
+
+
+            const hora =
+                partido.fecha.toLocaleTimeString(
+                    "es-ES",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+
+            html += `
+
+                <div class="resultado-partido">
+
+                    <div class="equipos">
+
+                        <div>
+
+                            ${
+                                partido.escudoRival
+                                ? `<img src="${partido.escudoRival}" width="60">`
+                                : ""
+                            }
+
+                            <p>
+                                <strong>
+                                    ${partido.rival}
+                                </strong>
+                            </p>
+
+                        </div>
+
+
+                        <h2>
+                            ${partido.marcador}
+                        </h2>
+
+
+                        <div>
+
+                            <img
+                                src="${partido.escudoMalaga}"
+                                width="60"
+                            >
+
+                            <p>
+                                <strong>
+                                    Málaga CF
+                                </strong>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <p>
+                        📅 ${fecha}
+
+                        ${
+                            partido.marcador === "-"
+                            ? " · " + hora
+                            : ""
+                        }
+
+                    </p>
+
+                </div>
+
+            `;
+
+        });
+
+
+        if (html === "") {
+
+            html = `
+                <p>
+                    ⚠️ No se han encontrado partidos del Málaga.
+                </p>
+            `;
+
+        }
+
+
+        contenedor.innerHTML = html;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        contenedor.innerHTML = `
+            <p>
+                ⚠️ No se pudieron cargar los partidos.
+            </p>
+        `;
+
+    }
+
+}
+
+
+cargarResultados();
+
+
+setInterval(
+    cargarResultados,
+    15 * 60 * 1000
+);
+
+</script>
+
+
+</body>
+
+</html>
