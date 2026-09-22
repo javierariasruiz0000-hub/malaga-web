@@ -357,147 +357,107 @@ footer {
 
     <script>
 
-async function cargarResultados() {
+async function cargarNoticias() {
 
-    const contenedor = document.getElementById("resultadosMalaga");
-
-    if (!contenedor) {
-        return;
-    }
+    const lista = document.getElementById("listaNoticias");
+    const estado = document.getElementById("estadoNoticias");
 
     try {
 
         const respuesta = await fetch(
-            "https://raw.githubusercontent.com/javierariasruiz0000-hub/malaga-web/main/resultados.json?actualizado=" + Date.now()
+            "https://api.rss2json.com/v1/api.json?rss_url=https://sportdirectradio.es/feed/"
         );
-
-        if (!respuesta.ok) {
-            throw new Error("No se pudo cargar resultados.json");
-        }
 
         const datos = await respuesta.json();
 
-        const eventos = datos.events || [];
+        if (datos.status !== "ok") {
+            throw new Error("No se pudieron cargar las noticias");
+        }
 
-        let partidos = [];
+        const noticias = datos.items
+            .filter(noticia => {
 
-        eventos.forEach(evento => {
+                const texto =
+                    (noticia.title + " " + noticia.description)
+                    .toLowerCase();
 
-            const competicion = evento.competitions?.[0];
+                return texto.includes("málaga") ||
+                       texto.includes("malaga") ||
+                       texto.includes("málaga cf") ||
+                       texto.includes("malaga cf");
 
-            if (!competicion) return;
+            })
+            .slice(0, 6);
 
-            const equipos = competicion.competitors || [];
 
-            const malaga = equipos.find(equipo =>
-                String(equipo.team?.id) === "99"
-            );
+        if (noticias.length === 0) {
 
-            if (!malaga) return;
+            estado.textContent =
+                "⚠️ No se han encontrado noticias del Málaga.";
 
-            const rival = equipos.find(equipo =>
-                String(equipo.team?.id) !== "99"
-            );
+            return;
 
-            if (!rival) return;
+        }
 
-            const fecha = new Date(evento.date);
 
-            let marcador = "-";
+        estado.textContent =
+            "🔄 Noticias actualizadas automáticamente";
 
-            if (
-                malaga.score?.displayValue &&
-                rival.score?.displayValue
-            ) {
-
-                marcador =
-                    `${rival.score.displayValue} - ${malaga.score.displayValue}`;
-
-            }
-
-            const escudoRival =
-                rival.team?.logos?.[0]?.href ||
-                rival.team?.logo ||
-                "";
-
-            const escudoMalaga =
-                malaga.team?.logos?.[0]?.href ||
-                malaga.team?.logo ||
-                "https://a.espncdn.com/i/teamlogos/soccer/500/99.png";
-
-            partidos.push({
-                fecha: fecha,
-                rival: rival.team?.displayName || "Rival",
-                escudoRival: escudoRival,
-                escudoMalaga: escudoMalaga,
-                marcador: marcador
-            });
-
-        });
-
-        partidos.sort((a, b) => b.fecha - a.fecha);
 
         let html = "";
 
-        partidos.forEach(partido => {
+
+        noticias.forEach(noticia => {
 
             const fecha =
-                partido.fecha.toLocaleDateString("es-ES");
+                new Date(noticia.pubDate)
+                .toLocaleDateString("es-ES");
 
-            const hora =
-                partido.fecha.toLocaleTimeString(
-                    "es-ES",
-                    {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                    }
-                );
 
             html += `
 
-                <div class="noticia resultado-partido">
+                <div class="noticia">
 
-                    <div class="equipos">
-
-                        <div>
-
-                            ${
-                                partido.escudoRival
-                                ? `<img src="${partido.escudoRival}" width="60">`
-                                : ""
-                            }
-
-                            <p>
-                                <strong>${partido.rival}</strong>
-                            </p>
-
-                        </div>
-
-                        <h2>${partido.marcador}</h2>
-
-                        <div>
-
-                            <img
-                                src="${partido.escudoMalaga}"
-                                width="60"
-                            >
-
-                            <p>
-                                <strong>Málaga CF</strong>
-                            </p>
-
-                        </div>
-
-                    </div>
+                    <h3>
+                        📰 ${noticia.title}
+                    </h3>
 
                     <p>
                         📅 ${fecha}
-                        ${
-                            partido.marcador === "-"
-                            ? " · " + hora
-                            : ""
-                        }
                     </p>
+
+                    <button
+                        onclick="mostrarNoticia(this)"
+                    >
+                        Leer noticia
+                    </button>
+
+
+                    <div
+                        class="contenidoNoticia"
+                        style="display:none;"
+                    >
+
+                        <p>
+                            ${noticia.description}
+                        </p>
+
+                        <a
+                            href="${noticia.link}"
+                            target="_blank"
+                        >
+                            Leer noticia completa
+                        </a>
+
+                        <br><br>
+
+                        <button
+                            onclick="cerrarNoticia(this)"
+                        >
+                            Cerrar
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -505,32 +465,64 @@ async function cargarResultados() {
 
         });
 
-        if (html === "") {
 
-            html = `
-                <p>⚠️ No se han encontrado partidos del Málaga.</p>
-            `;
+        lista.innerHTML = html;
 
-        }
-
-        contenedor.innerHTML = html;
 
     } catch (error) {
 
         console.error(error);
 
-        contenedor.innerHTML = `
-            <p>⚠️ No se pudieron cargar los partidos.</p>
-        `;
+        estado.textContent =
+            "⚠️ No se pudieron cargar las noticias.";
 
     }
 
 }
 
-cargarResultados();
+
+function mostrarNoticia(boton) {
+
+    const noticia =
+        boton.parentElement;
+
+    const contenido =
+        noticia.querySelector(".contenidoNoticia");
+
+    contenido.style.display = "block";
+
+    boton.style.display = "none";
+
+}
+
+
+function cerrarNoticia(boton) {
+
+    const noticia =
+        boton.parentElement.parentElement;
+
+    const contenido =
+        noticia.querySelector(".contenidoNoticia");
+
+    const botonLeer =
+        noticia.querySelector("button");
+
+    contenido.style.display = "none";
+
+    botonLeer.style.display = "inline-block";
+
+}
+
+
+// Cargar noticias al abrir la página
+
+cargarNoticias();
+
+
+// Actualizar cada 15 minutos
 
 setInterval(
-    cargarResultados,
+    cargarNoticias,
     15 * 60 * 1000
 );
 
