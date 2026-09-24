@@ -163,7 +163,7 @@ button:hover {
 }
 
 #puntuacion {
-    font-size: 22px;
+    font-size: 22px;f
     font-weight: bold;
     margin-top: 25px;
 }
@@ -949,4 +949,98 @@ setInterval(cargarClasificacion, 15 * 60 * 1000);
 `;
 
 </script>
+    <!-- ===== QUIZ ===== -->
+
+<section class="seccion" id="quiz">
+
+    <h2>🎯 QUIZ DEL MÁLAGA CF</h2>
+
+    <p id="pregunta"></p>
+
+    <div id="respuestas"></div>
+<script>
+
+const preguntas = [
+    {
+        pregunta: "¿En qué estadio juega el Málaga CF?",
+        respuestas: ["La Rosaleda", "Santiago Bernabéu", "Camp Nou"],
+        correcta: 0
+    },
+    {
+        pregunta: "¿Cuál es el apodo del Málaga CF?",
+        respuestas: ["Los Leones", "Los Boquerones", "Los Vikingos"],
+        correcta: 1
+    },
+    {
+        pregunta: "¿De qué colores es el Málaga CF?",
+        respuestas: ["Azul y blanco", "Rojo y negro", "Verde y blanco"],
+        correcta: 0
+    },
+    {
+        pregunta: "¿Cómo se llama la afición del Málaga?",
+        respuestas: ["La Boquerona", "La Malaguista", "La afición malaguista"],
+        correcta: 2
+    },
+    {
+        pregunta: "¿En qué ciudad juega el Málaga CF?",
+        respuestas: ["Sevilla", "Málaga", "Cádiz"],
+        correcta: 1
+    }
+];
+
+let preguntaActual = 0;
+let puntuacion = 0;
+
+function mostrarPregunta() {
+
+    const pregunta = preguntas[preguntaActual];
+
+    document.getElementById("pregunta").textContent =
+        pregunta.pregunta;
+
+    const respuestas =
+        document.getElementById("respuestas");
+
+    respuestas.innerHTML = "";
+
+    pregunta.respuestas.forEach((respuesta, indice) => {
+
+        const boton = document.createElement("button");
+
+        boton.textContent = respuesta;
+
+        boton.onclick = function() {
+
+            if (indice === pregunta.correcta) {
+                puntuacion++;
+            }
+
+            preguntaActual++;
+
+            if (preguntaActual < preguntas.length) {
+                mostrarPregunta();
+            } else {
+                document.getElementById("pregunta").textContent =
+                    "🎉 ¡Quiz terminado!";
+
+                respuestas.innerHTML = "";
+
+                document.getElementById("puntuacion").textContent =
+                    `💙🤍 Has conseguido ${puntuacion} de ${preguntas.length} puntos.`;
+            }
+
+        };
+
+        respuestas.appendChild(boton);
+
+    });
+
+}
+
+mostrarPregunta();
+
+</script>
+    <p id="puntuacion"></p>
+
+</section>
 </html>
