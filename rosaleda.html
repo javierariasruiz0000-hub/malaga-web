@@ -4,205 +4,361 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>La Rosaleda - Málaga CF</title>
+<title>La Rosaleda | Málaga CF</title>
 
 <style>
+
 * {
     box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #001b3d, #0077c8);
     color: white;
+    background:
+        radial-gradient(circle at top, #009ee3 0%, #003b7a 45%, #00152f 100%);
 }
+
+/* ===== CABECERA ===== */
 
 header {
+    min-height: 430px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    padding: 45px 20px;
-    background: linear-gradient(135deg, #003b7a, #009ee3);
+    padding: 40px 20px;
+    background:
+        linear-gradient(rgba(0,20,50,.55), rgba(0,20,50,.85)),
+        linear-gradient(135deg, #009ee3, #001b3d);
 }
 
-header h1 {
-    font-size: 42px;
-    margin: 0;
+.hero {
+    max-width: 900px;
 }
 
-header p {
-    font-size: 20px;
-    margin-top: 10px;
+.hero .icono {
+    font-size: 90px;
+    animation: flotar 3s infinite ease-in-out;
 }
+
+.hero h1 {
+    font-size: 60px;
+    margin: 10px 0;
+    text-shadow: 0 5px 20px rgba(0,0,0,.5);
+}
+
+.hero p {
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+/* ===== ANIMACIÓN ===== */
+
+@keyframes flotar {
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/* ===== CONTENEDOR ===== */
 
 .contenedor {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: auto;
-    padding: 30px 20px;
+    padding: 35px 20px;
 }
+
+/* ===== BOTÓN VOLVER ===== */
 
 .volver {
     display: inline-block;
     background: white;
     color: #003b7a;
-    padding: 13px 22px;
-    border-radius: 12px;
+    padding: 14px 24px;
+    border-radius: 30px;
     text-decoration: none;
     font-weight: bold;
-    margin-bottom: 25px;
-    transition: 0.3s;
+    margin-bottom: 30px;
+    transition: .3s;
 }
 
 .volver:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
+/* ===== TARJETAS ===== */
+
 .tarjeta {
-    background: white;
+    background: rgba(255,255,255,.96);
     color: #001b3d;
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 25px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border-radius: 25px;
+    padding: 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 12px 35px rgba(0,0,0,.3);
     text-align: center;
 }
 
 .tarjeta h2 {
     color: #003b7a;
-    font-size: 30px;
+    font-size: 32px;
+    margin-top: 0;
 }
 
 .tarjeta p {
-    font-size: 18px;
-    line-height: 1.6;
+    font-size: 19px;
+    line-height: 1.7;
 }
 
-.escudo {
-    width: 110px;
-    margin: 10px;
-}
+/* ===== DATOS ===== */
 
 .datos {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3,1fr);
     gap: 20px;
+    margin-top: 25px;
 }
 
 .dato {
-    background: linear-gradient(135deg, #003b7a, #009ee3);
+    padding: 28px 15px;
+    border-radius: 20px;
     color: white;
-    padding: 25px 15px;
-    border-radius: 15px;
+    background: linear-gradient(135deg,#003b7a,#009ee3);
+    box-shadow: 0 7px 20px rgba(0,0,0,.2);
+    transition: .3s;
+}
+
+.dato:hover {
+    transform: translateY(-8px);
+}
+
+.dato .emoji {
+    font-size: 45px;
 }
 
 .dato h3 {
-    margin: 0 0 10px;
-    font-size: 22px;
+    font-size: 21px;
+    margin: 10px 0;
 }
 
 .dato p {
+    font-size: 17px;
     margin: 0;
-    font-size: 18px;
 }
 
-.grande {
-    font-size: 50px;
+/* ===== FRASE FINAL ===== */
+
+.final {
+    text-align: center;
+    padding: 55px 20px;
+    background: rgba(0,0,0,.25);
 }
+
+.final h2 {
+    font-size: 40px;
+    margin: 0 0 15px;
+}
+
+.final p {
+    font-size: 22px;
+}
+
+/* ===== PIE ===== */
 
 footer {
     text-align: center;
     padding: 25px;
-    margin-top: 20px;
     background: #00152f;
+    font-size: 18px;
 }
 
-@media (max-width: 700px) {
-    header h1 {
-        font-size: 30px;
+/* ===== MÓVIL ===== */
+
+@media(max-width:700px) {
+
+    .hero h1 {
+        font-size: 40px;
+    }
+
+    .hero p {
+        font-size: 19px;
+    }
+
+    .hero .icono {
+        font-size: 70px;
     }
 
     .datos {
         grid-template-columns: 1fr;
     }
+
+    .tarjeta {
+        padding: 25px 18px;
+    }
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- ===== PORTADA ===== -->
+
 <header>
-    <h1>🏟️ LA ROSALEDA 🏟️</h1>
-    <p>💙🤍 El templo del malaguismo 🤍💙</p>
+
+    <div class="hero">
+
+        <div class="icono">🏟️</div>
+
+        <h1>LA ROSALEDA</h1>
+
+        <p>
+            💙🤍 EL TEMPLO DEL MALAGUISMO 🤍💙
+        </p>
+
+    </div>
+
 </header>
+
 
 <div class="contenedor">
 
-    <a class="volver" href="index.html">⬅️ Volver al inicio</a>
+    <!-- ===== VOLVER ===== -->
+
+    <a class="volver" href="index.html">
+        ⬅️ Volver al inicio
+    </a>
+
+
+    <!-- ===== PRESENTACIÓN ===== -->
 
     <div class="tarjeta">
-        <div class="grande">🏟️</div>
 
-        <h2>💙🤍 Estadio La Rosaleda 🤍💙</h2>
+        <h2>🏟️ El corazón del Málaga CF</h2>
 
         <p>
             La Rosaleda es el estadio donde juega sus partidos
-            el Málaga CF y uno de los lugares más importantes
-            para todos los malaguistas.
+            el Málaga CF.
         </p>
 
         <p>
-            🔥 Aquí se vive la pasión, los cánticos y el sentimiento
-            blanquiazul en cada partido.
+            Aquí los malaguistas se reúnen para animar al equipo,
+            cantar y vivir cada partido con pasión.
         </p>
 
         <p>
-            🐟 ¡La Rosaleda es territorio malaguista!
+            💙🤍 ¡Un lugar lleno de sentimiento blanquiazul! 🤍💙
         </p>
+
     </div>
 
+
+    <!-- ===== INFORMACIÓN ===== -->
+
     <div class="tarjeta">
-        <h2>📋 LA ROSALEDA</h2>
+
+        <h2>📋 LA ROSALEDA EN DATOS</h2>
 
         <div class="datos">
 
             <div class="dato">
-                <h3>📍 Ubicación</h3>
-                <p>Málaga, Andalucía</p>
+
+                <div class="emoji">📍</div>
+
+                <h3>Ubicación</h3>
+
+                <p>
+                    Málaga<br>
+                    Andalucía
+                </p>
+
             </div>
 
-            <div class="dato">
-                <h3>⚽ Equipo</h3>
-                <p>Málaga CF</p>
-            </div>
 
             <div class="dato">
-                <h3>💙 Afición</h3>
-                <p>Malaguistas</p>
+
+                <div class="emoji">⚽</div>
+
+                <h3>Equipo</h3>
+
+                <p>
+                    Málaga CF
+                </p>
+
+            </div>
+
+
+            <div class="dato">
+
+                <div class="emoji">🐟</div>
+
+                <h3>Afición</h3>
+
+                <p>
+                    Los malaguistas
+                </p>
+
             </div>
 
         </div>
+
     </div>
 
+
+    <!-- ===== AMBIENTE ===== -->
+
     <div class="tarjeta">
-        <h2>🔥 EL TEMPLO DEL MÁLAGA</h2>
+
+        <h2>🔥 DÍA DE PARTIDO</h2>
 
         <p>
-            Cuando juega el Málaga CF, La Rosaleda se llena
-            de pasión blanquiazul.
+            Cuando llega el día de partido,
+            La Rosaleda se transforma.
         </p>
 
         <p>
-            💙🤍 ¡VAMOS MÁLAGA! 🤍💙
+            💙 Banderas<br>
+            🤍 Camisetas blanquiazules<br>
+            🗣️ Cánticos<br>
+            ⚽ Fútbol<br>
+            🔥 Pasión
         </p>
 
         <p>
-            🐟 ¡SIEMPRE MÁLAGA! ⚽
+            Todo se une para animar al Málaga CF.
         </p>
+
     </div>
 
 </div>
 
+
+<!-- ===== FINAL ===== -->
+
+<section class="final">
+
+    <h2>💙🤍 ¡VAMOS MÁLAGA! 🤍💙</h2>
+
+    <p>
+        🐟 La Rosaleda siempre será territorio malaguista.
+    </p>
+
+</section>
+
+
 <footer>
+
     🐟 ¡SIEMPRE MÁLAGA! ⚽
+
 </footer>
 
 </body>
