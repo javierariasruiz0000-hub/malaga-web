@@ -11,7 +11,21 @@
 * {
     box-sizing: border-box;
 }
+.foto-rosaleda {
+    width: 100%;
+    max-width: 1000px;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 25px;
+    display: block;
+    margin: 0 auto 25px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.5);
+    transition: transform 0.4s;
+}
 
+.foto-rosaleda:hover {
+    transform: scale(1.02);
+}
 html {
     scroll-behavior: smooth;
 }
@@ -214,7 +228,7 @@ footer {
 <!-- ===== PORTADA ===== -->
 
 <header>
-
+<img src="malaga.jpg" class="foto-rosaleda">
     <div class="hero">
 
         <div class="icono">🏟️</div>
