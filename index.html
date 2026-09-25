@@ -153,7 +153,49 @@ button:hover {
     margin-top: 0;
 }
 
-<!-- ===== PRÓXIMO PARTIDO ===== -->
+
+/* ===== QUIZ ===== */
+
+#pregunta {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#puntuacion {
+    font-size: 22px;f
+    font-weight: bold;
+    margin-top: 25px;
+}
+
+
+/* ===== PIE ===== */
+
+footer {
+    background: #00152f;
+    text-align: center;
+    padding: 35px;
+    margin-top: 60px;
+}
+
+
+/* ===== ANIMACIÓN ===== */
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+</style>
+    <!-- ===== PRÓXIMO PARTIDO ===== -->
 
 <section class="seccion" id="proximo-partido">
 
@@ -254,47 +296,6 @@ async function cargarProximoPartido() {
 cargarProximoPartido();
 
 </script>
-/* ===== QUIZ ===== */
-
-#pregunta {
-    font-size: 25px;
-    font-weight: bold;
-}
-
-#puntuacion {
-    font-size: 22px;f
-    font-weight: bold;
-    margin-top: 25px;
-}
-
-
-/* ===== PIE ===== */
-
-footer {
-    background: #00152f;
-    text-align: center;
-    padding: 35px;
-    margin-top: 60px;
-}
-
-
-/* ===== ANIMACIÓN ===== */
-
-@keyframes aparecer {
-
-    from {
-        opacity: 0;
-        transform: translateY(-40px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-}
-
-</style>
 </head>
 
 
