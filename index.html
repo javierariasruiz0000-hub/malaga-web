@@ -318,7 +318,99 @@ footer {
 
 </section>
 
+<script>
 
+async function cargarProximoPartido() {
+
+    try {
+
+        const respuesta = await fetch(
+            "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/teams/99/schedule"
+        );
+
+        const datos = await respuesta.json();
+
+        const ahora = new Date();
+
+        const partidos = datos.events
+            .map(evento => {
+
+                const competicion = evento.competitions?.[0];
+
+                if (!competicion) return null;
+
+                const equipos = competicion.competitors || [];
+
+                const malaga = equipos.find(equipo =>
+                    String(equipo.team?.id) === "99"
+                );
+
+                const rival = equipos.find(equipo =>
+                    String(equipo.team?.id) !== "99"
+                );
+
+                if (!malaga || !rival) return null;
+
+                return {
+                    fecha: new Date(evento.date),
+                    rival: rival.team?.displayName || "Rival"
+                };
+
+            })
+            .filter(partido =>
+                partido &&
+                partido.fecha > ahora
+            )
+            .sort((a, b) =>
+                a.fecha - b.fecha
+            );
+
+        if (partidos.length === 0) {
+
+            document.getElementById("proximoRival").textContent =
+                "⚠️ No hay próximo partido disponible.";
+
+            return;
+        }
+
+        const partido = partidos[0];
+
+        document.getElementById("proximoRival").textContent =
+            "Málaga CF 🆚 " + partido.rival;
+
+        document.getElementById("proximaFecha").textContent =
+            "📅 " +
+            partido.fecha.toLocaleDateString("es-ES");
+
+        document.getElementById("proximaHora").textContent =
+            "🕘 " +
+            partido.fecha.toLocaleTimeString(
+                "es-ES",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            );
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("proximoRival").textContent =
+            "⚠️ No se pudo cargar el próximo partido.";
+
+    }
+
+}
+
+cargarProximoPartido();
+
+setInterval(
+    cargarProximoPartido,
+    15 * 60 * 1000
+);
+
+</script>
 <!-- ===== NOTICIAS ===== -->
 
 <section class="seccion" id="noticias">
