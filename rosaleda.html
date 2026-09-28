@@ -7,7 +7,70 @@
 <title>La Rosaleda | Málaga CF</title>
 
 <style>
+/* ===== GALERÍA ===== */
 
+.galeria-seccion {
+    margin-top: 35px;
+    padding: 35px 20px;
+    background: rgba(0, 15, 45, 0.65);
+    border-radius: 25px;
+    text-align: center;
+}
+
+.galeria-seccion h2 {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.texto-galeria {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.galeria {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.foto-galeria {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.foto-galeria img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s;
+}
+
+.foto-galeria:hover img {
+    transform: scale(1.08);
+}
+
+.titulo-foto {
+    padding: 15px;
+    background: white;
+    color: #003b7a;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+@media (max-width: 700px) {
+
+    .galeria {
+        grid-template-columns: 1fr;
+    }
+
+    .foto-galeria img {
+        height: 250px;
+    }
+}
 * {
     box-sizing: border-box;
 }
