@@ -106,7 +106,35 @@ header p {
     transform:scale(1.08);
     background:#eaf7ff;
 }
-.final {
+.frases-miticas {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+    margin-top:25px;
+}
+
+.frase {
+    background:linear-gradient(135deg,#003b7a,#009ee3);
+    color:white;
+    padding:25px;
+    border-radius:20px;
+    font-size:22px;
+    font-weight:bold;
+    box-shadow:0 8px 20px rgba(0,0,0,.3);
+    transition:transform .3s, box-shadow .3s;
+}
+
+.frase:hover {
+    transform:scale(1.05);
+    box-shadow:0 12px 28px rgba(0,0,0,.4);
+}
+
+@media(max-width:700px) {
+    .frases-miticas {
+        grid-template-columns:1fr;
+    }
+}
+    .final {
     text-align: center;
     padding: 60px 20px;
     background: rgba(0,0,0,.25);
@@ -296,7 +324,38 @@ footer {
         </div>
 
     </div>
+<!-- ===== FRASES MÍTICAS ===== -->
+<div class="tarjeta">
+    <h2>🗣️ FRASES MÍTICAS MALAGUISTAS</h2>
 
+    <div class="frases-miticas">
+
+        <div class="frase">
+            💙🤍 «¡Vamos Málaga!»
+        </div>
+
+        <div class="frase">
+            🐟 «¡Siempre Málaga!»
+        </div>
+
+        <div class="frase">
+            🔥 «¡Málaga nunca se rinde!»
+        </div>
+
+        <div class="frase">
+            🏟️ «¡La Rosaleda aprieta!»
+        </div>
+
+        <div class="frase">
+            💙 «¡Hasta el final, Málaga!»
+        </div>
+
+        <div class="frase">
+            🤍 «¡Málaga, Málaga, Málaga!»
+        </div>
+
+    </div>
+</div>
     <div class="tarjeta">
 
         <h2>🏟️ LA ROSALEDA</h2>
