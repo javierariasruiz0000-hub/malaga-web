@@ -668,97 +668,76 @@ setInterval(
 
 </section>
 
+
 <script>
 async function cargarNoticias() {
-    const estado = document.getElementById("estadoNoticias");
     const lista = document.getElementById("listaNoticias");
+    if (!lista) return;
 
-    if (!estado || !lista) {
-        console.error("Faltan estadoNoticias o listaNoticias en el HTML.");
-        return;
-    }
-
-    estado.textContent = "⏳ Cargando las últimas noticias...";
-    lista.replaceChildren();
+    lista.textContent = "⏳ Cargando últimas noticias...";
 
     try {
-        const feed = encodeURIComponent("https://sportdirectradio.es/feed/");
-        const url = "https://api.rss2json.com/v1/api.json?rss_url=" + feed;
+        const pagina = "https://sportdirectradio.es/";
+        const proxy = "https://api.allorigins.win/raw?url="
+            + encodeURIComponent(pagina);
 
-        const respuesta = await fetch(url, {
-            signal: AbortSignal.timeout(12000)
-        });
+        const respuesta = await fetch(proxy);
 
-        if (!respuesta.ok) {
-            throw new Error("Servicio de noticias: HTTP " + respuesta.status);
-        }
+        if (!respuesta.ok) throw new Error("No se pudo consultar la fuente");
 
-        const datos = await respuesta.json();
+        const html = await respuesta.text();
+        const documento = new DOMParser().parseFromString(html, "text/html");
 
-        if (datos.status !== "ok" || !Array.isArray(datos.items)) {
-            throw new Error("El servicio RSS no ha devuelto noticias válidas.");
-        }
+        const enlaces = Array.from(documento.querySelectorAll("a"))
+            .filter(a => {
+                const texto = (a.innerText || a.textContent || "").trim();
+                const href = a.href || "";
+                return texto.length > 20 &&
+                       href.startsWith("https://sportdirectradio.es/") &&
+                       !href.includes("#");
+            });
 
-        const noticias = datos.items.filter(n => {
-            const texto = ((n.title || "") + " " + (n.description || ""))
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase();
-
-            return texto.includes("malaga cf") ||
-                   texto.includes("malaga");
+        const vistos = new Set();
+        const noticias = enlaces.filter(a => {
+            const href = a.href.replace(/\/$/, "");
+            if (vistos.has(href)) return false;
+            vistos.add(href);
+            return true;
         }).slice(0, 6);
 
         if (!noticias.length) {
-            estado.textContent = "No se han encontrado noticias del Málaga.";
-            return;
+            throw new Error("No se encontraron artículos");
         }
 
-        noticias.forEach(n => {
+        lista.replaceChildren();
+
+        noticias.forEach(a => {
             const tarjeta = document.createElement("article");
             tarjeta.className = "noticia";
 
             const titulo = document.createElement("h3");
-            titulo.textContent = "📰 " + n.title;
-
-            const fecha = document.createElement("p");
-            const fechaDato = new Date(n.pubDate);
-            fecha.textContent = isNaN(fechaDato.getTime())
-                ? ""
-                : "📅 " + fechaDato.toLocaleDateString("es-ES");
-
-            const resumen = document.createElement("p");
-            resumen.textContent = (n.description || "")
-                .replace(/<[^>]*>/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
+            titulo.textContent = "📰 " + a.textContent.trim();
 
             const enlace = document.createElement("a");
-            enlace.href = n.link;
+            enlace.href = a.href;
             enlace.target = "_blank";
             enlace.rel = "noopener noreferrer";
             enlace.textContent = "Leer noticia completa ↗";
 
-            tarjeta.append(titulo, fecha, resumen, enlace);
+            tarjeta.append(titulo, enlace);
             lista.appendChild(tarjeta);
         });
-
-        estado.textContent = "💙🤍 Últimas noticias del Málaga CF";
-
     } catch (error) {
-        console.error("Error al cargar noticias:", error);
-        estado.textContent =
-            "⚠️ No se pudieron cargar las noticias. Pulsa para reintentar.";
-
-        const reintentar = document.createElement("button");
-        reintentar.textContent = "🔄 Reintentar";
-        reintentar.onclick = cargarNoticias;
-        lista.appendChild(reintentar);
+        console.error("Error cargando noticias:", error);
+        lista.textContent =
+            "No se pudieron cargar las noticias automáticamente. Inténtalo más tarde.";
     }
 }
 
 cargarNoticias();
+setInterval(cargarNoticias, 15 * 60 * 1000);
 </script>
+
 
 
 
