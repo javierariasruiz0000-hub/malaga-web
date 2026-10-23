@@ -657,38 +657,56 @@ setInterval(
     
 <!-- ===== NOTICIAS DEL MÁLAGA CF ===== -->
 
+
+<!-- ===== EL RINCÓN MALAGUISTA ===== -->
 <section class="seccion" id="noticias-automaticas">
   <h2>📰 EL RINCÓN MALAGUISTA</h2>
-  <p>💙🤍 Toda la actualidad de nuestro Málaga CF</p>
-  <p id="estadoNoticias">Buscando las últimas noticias...</p>
+  <p class="subtitulo-noticias">Toda la actualidad blanquiazul, en un mismo sitio 💙🤍</p>
+  <p id="estadoNoticias">🔄 Buscando las últimas noticias...</p>
   <div id="listaNoticias" class="rejilla-noticias"></div>
-  <p><a href="https://news.google.com/search?q=M%C3%A1laga+CF&hl=es&gl=ES&ceid=ES:es"
-        target="_blank" rel="noopener noreferrer">Ver más noticias ↗</a></p>
+  <p class="aviso-noticias">
+    Los resúmenes se muestran aquí. Los artículos completos pertenecen a sus medios.
+  </p>
 </section>
 
 <style>
+.subtitulo-noticias {
+  color: #c5eaff;
+  font-size: 18px;
+}
 .rejilla-noticias {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
-  text-align:left;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  text-align: left;
 }
 .noticia-malaga {
-  background:linear-gradient(145deg,#06345f,#00152f);
-  border:1px solid #348ac4;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:0 8px 22px #0003;
+  background: linear-gradient(145deg, #06345f, #00152f);
+  border: 1px solid rgba(101,202,255,.55);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 8px 22px rgba(0,0,0,.22);
+  overflow-wrap: anywhere;
 }
-.noticia-malaga h3 {font-size:20px;line-height:1.4}
-.noticia-malaga p {line-height:1.7}
-.noticia-malaga .detalle {display:none}
-.noticia-malaga .detalle.abierto {display:block}
+.noticia-malaga h3 {
+  font-size: 20px;
+  line-height: 1.45;
+  margin-top: 0;
+}
+.noticia-malaga p { line-height: 1.7; }
+.noticia-malaga .medio-noticia {
+  color: #9cdeff;
+  font-size: 13px;
+}
+.noticia-malaga .detalle-noticia { display: none; }
+.noticia-malaga .detalle-noticia.abierto { display: block; }
 .noticia-malaga button {
-  background:#0088d1;color:white;border-radius:9px;
+  background: #0088d1;
+  color: white;
+  border-radius: 9px;
 }
-.noticia-malaga a {color:#a8e1ff}
-.etiqueta-medio {font-size:13px;color:#a8e1ff}
+.noticia-malaga a, .aviso-noticias a { color: #a8e1ff; }
+.aviso-noticias { font-size: 13px; color: #c5eaff; }
 </style>
 
 <script>
@@ -697,128 +715,149 @@ async function cargarNoticiasMalaga() {
   const lista = document.getElementById("listaNoticias");
   if (!estado || !lista) return;
 
+  estado.textContent = "🔄 Actualizando titulares...";
+  
   const fuentes = [
     {
       nombre: "Google Noticias",
-      url: "https://news.google.com/rss/search?q=M%C3%A1laga+CF+when%3A7d&hl=es&gl=ES&ceid=ES:es"
+      rss: "https://news.google.com/rss/search?q=M%C3%A1laga+CF&hl=es&gl=ES&ceid=ES:es"
     },
     {
       nombre: "SportDirect Radio",
-      url: "https://sportdirectradio.es/feed/"
+      rss: "https://sportdirectradio.es/feed/"
+    },
+    {
+      nombre: "Google Noticias · Funes",
+      rss: "https://news.google.com/rss/search?q=M%C3%A1laga+CF+Funes&hl=es&gl=ES&ceid=ES:es"
     }
   ];
 
-  estado.textContent = "🔄 Actualizando noticias...";
+  const limpiarTexto = html => {
+    const doc = new DOMParser().parseFromString(html || "", "text/html");
+    return (doc.body.textContent || "").replace(/\s+/g, " ").trim();
+  };
+
+  const normalizar = texto => (texto || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
   const resultados = await Promise.allSettled(
     fuentes.map(async fuente => {
-      const api = "https://api.rss2json.com/v1/api.json?rss_url="
-        + encodeURIComponent(fuente.url);
-      const respuesta = await fetch(api);
+      const endpoint = "https://api.rss2json.com/v1/api.json?rss_url="
+        + encodeURIComponent(fuente.rss);
+
+      const respuesta = await fetch(endpoint);
       if (!respuesta.ok) throw new Error("Fuente no disponible");
+
       const datos = await respuesta.json();
-      if (datos.status !== "ok" || !Array.isArray(datos.items))
+      if (datos.status !== "ok" || !Array.isArray(datos.items)) {
         throw new Error("RSS no disponible");
+      }
 
       return datos.items.map(item => ({
-        titulo: item.title || "Noticia del Málaga CF",
+        titulo: limpiarTexto(item.title),
         fecha: item.pubDate || "",
-        resumen: item.description || item.content || "",
-        enlace: item.link || "",
+        resumen: limpiarTexto(item.description || item.content || ""),
+        url: item.link || "",
         medio: item.author || fuente.nombre
       }));
     })
   );
 
   const noticias = resultados
-    .filter(r => r.status === "fulfilled")
-    .flatMap(r => r.value)
+    .filter(resultado => resultado.status === "fulfilled")
+    .flatMap(resultado => resultado.value)
     .filter(n => {
-      const texto = (n.titulo + " " + n.resumen)
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase();
-      return texto.includes("malaga") &&
-        texto.includes("cf") &&
-        n.enlace.startsWith("https://");
+      const texto = normalizar(n.titulo + " " + n.resumen);
+      return n.titulo &&
+        n.url.startsWith("https://") &&
+        texto.includes("malaga") &&
+        (texto.includes("cf") ||
+         texto.includes("funes") ||
+         texto.includes("boquerones") ||
+         texto.includes("rosaleda"));
     });
 
   const unicas = [...new Map(
-    noticias.map(n => [n.enlace, n])
-  ).values()];
-
-  unicas.sort((a,b) =>
-    new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
-  );
+    noticias.map(n => [n.url, n])
+  ).values()].sort((a, b) => {
+    const fechaA = new Date(a.fecha).getTime() || 0;
+    const fechaB = new Date(b.fecha).getTime() || 0;
+    return fechaB - fechaA;
+  });
 
   if (!unicas.length) {
     estado.textContent =
-      "No hay noticias disponibles en este momento. Puedes consultar las fuentes directamente.";
+      "No hemos podido obtener titulares nuevos ahora. Prueba de nuevo más tarde.";
     return;
   }
 
   lista.replaceChildren();
 
-  unicas.slice(0,12).forEach((n,i) => {
+  unicas.slice(0, 12).forEach((noticia, i) => {
     const tarjeta = document.createElement("article");
     tarjeta.className = "noticia-malaga";
 
     const titulo = document.createElement("h3");
-    titulo.textContent = "💙🤍 " + n.titulo;
+    titulo.textContent = "💙🤍 " + noticia.titulo;
 
     const medio = document.createElement("p");
-    medio.className = "etiqueta-medio";
-    medio.textContent = "📰 " + n.medio;
+    medio.className = "medio-noticia";
+    medio.textContent = "📰 " + noticia.medio;
 
     const fecha = document.createElement("p");
-    const d = new Date(n.fecha);
-    fecha.textContent = isNaN(d.getTime())
-      ? "" : "📅 " + d.toLocaleDateString("es-ES");
-
-    const textoLimpio = html => {
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      return (doc.body.textContent || "").replace(/\s+/g," ").trim();
-    };
+    const fechaPublicacion = new Date(noticia.fecha);
+    fecha.textContent = isNaN(fechaPublicacion.getTime())
+      ? ""
+      : "📅 " + fechaPublicacion.toLocaleDateString("es-ES");
 
     const resumen = document.createElement("p");
-    const contenido = textoLimpio(n.resumen);
-    resumen.textContent = contenido.length > 220
-      ? contenido.slice(0,220) + "…" : contenido;
+    const textoResumen = noticia.resumen;
+    resumen.textContent = textoResumen.length > 240
+      ? textoResumen.slice(0, 240) + "…"
+      : textoResumen || "Consulta los detalles en la fuente original.";
 
     const detalle = document.createElement("div");
-    detalle.className = "detalle";
+    detalle.className = "detalle-noticia";
     detalle.id = "detalle-noticia-" + i;
 
     const textoCompleto = document.createElement("p");
-    textoCompleto.textContent = contenido;
+    textoCompleto.textContent = textoResumen ||
+      "Este medio no proporciona un resumen adicional.";
     detalle.appendChild(textoCompleto);
 
     const enlace = document.createElement("a");
-    enlace.href = n.enlace;
+    enlace.href = noticia.url;
     enlace.target = "_blank";
     enlace.rel = "noopener noreferrer";
-    enlace.textContent = "Leer fuente original ↗";
+    enlace.textContent = "Leer artículo original ↗";
     detalle.appendChild(enlace);
 
     const boton = document.createElement("button");
-    boton.textContent = "Leer más ↓";
     boton.type = "button";
-    boton.setAttribute("aria-expanded","false");
-    boton.onclick = () => {
+    boton.textContent = "Leer más ↓";
+    boton.setAttribute("aria-expanded", "false");
+
+    boton.addEventListener("click", () => {
       const abierto = detalle.classList.toggle("abierto");
       boton.textContent = abierto ? "Leer menos ↑" : "Leer más ↓";
-      boton.setAttribute("aria-expanded",String(abierto));
-    };
+      boton.setAttribute("aria-expanded", String(abierto));
+    });
 
-    tarjeta.append(titulo,medio,fecha,resumen,boton,detalle);
+    tarjeta.append(titulo, medio, fecha, resumen, boton, detalle);
     lista.appendChild(tarjeta);
   });
 
-  estado.textContent = "💙🤍 " + Math.min(unicas.length,12)
-    + " noticias encontradas · Consulta periódica activada";
+  estado.textContent =
+    "💙🤍 " + Math.min(unicas.length, 12) +
+    " noticias encontradas · Fuentes consultadas correctamente";
 }
 
 cargarNoticiasMalaga();
 setInterval(cargarNoticiasMalaga, 15 * 60 * 1000);
 </script>
+
 
 
 
