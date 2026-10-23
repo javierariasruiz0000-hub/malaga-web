@@ -609,19 +609,20 @@ setInterval(
 <!-- ===== NOTICIAS ===== -->
 
 
+
 <section class="seccion" id="noticias">
     <h2>📰 NOTICIAS DEL MÁLAGA</h2>
     <p>💙🤍 ¡Toda la actualidad de los boquerones!</p>
-
-    <p id="estadoNoticias">⏳ Cargando noticias del Málaga...</p>
-
+    <p id="estadoNoticias">⏳ Cargando noticias...</p>
     <div id="listaNoticias"></div>
 </section>
+
 
   
 
 
     
+
 
 <script>
 async function cargarNoticias() {
@@ -630,18 +631,18 @@ async function cargarNoticias() {
 
     if (!lista || !estado) return;
 
-    estado.textContent = "⏳ Buscando noticias del Málaga...";
-    lista.innerHTML = "";
+    estado.textContent = "⏳ Cargando noticias del Málaga...";
+    lista.replaceChildren();
 
     try {
-        const rss = "https://sportdirectradio.es/feed/";
-        const url = "https://api.rss2json.com/v1/api.json?rss_url="
-            + encodeURIComponent(rss);
+        const feed = "https://sportdirectradio.es/feed/";
+        const api = "https://api.rss2json.com/v1/api.json?rss_url="
+            + encodeURIComponent(feed);
 
-        const respuesta = await fetch(url);
+        const respuesta = await fetch(api);
 
         if (!respuesta.ok) {
-            throw new Error("Error al consultar el servicio de noticias");
+            throw new Error("Error HTTP: " + respuesta.status);
         }
 
         const datos = await respuesta.json();
@@ -650,83 +651,74 @@ async function cargarNoticias() {
             throw new Error("El servicio RSS no ha devuelto noticias");
         }
 
-        const noticias = datos.items.filter(noticia => {
-            const texto = (
-                (noticia.title || "") + " " +
-                (noticia.description || "")
-            ).toLowerCase();
+        const noticias = datos.items.filter(n => {
+            const texto = (n.title || "").toLowerCase()
+                + " " + (n.description || "").toLowerCase();
 
-            return texto.includes("málaga") ||
-                   texto.includes("malaga");
+            return texto.includes("málaga") || texto.includes("malaga");
         }).slice(0, 6);
 
         if (noticias.length === 0) {
-            estado.textContent =
-                "ℹ️ Ahora mismo no se encuentran noticias del Málaga.";
+            estado.textContent = "No se encontraron noticias del Málaga.";
             return;
         }
 
-        lista.innerHTML = "";
-
-        noticias.forEach((noticia, indice) => {
+        noticias.forEach(n => {
             const tarjeta = document.createElement("article");
             tarjeta.className = "noticia";
 
             const titulo = document.createElement("h3");
-            titulo.textContent = "📰 " + noticia.title;
+            titulo.textContent = "📰 " + n.title;
 
             const fecha = document.createElement("p");
-            const fechaPublicacion = new Date(noticia.pubDate);
-            fecha.textContent = !isNaN(fechaPublicacion.getTime())
-                ? "📅 " + fechaPublicacion.toLocaleDateString("es-ES")
-                : "";
+            const fechaDato = new Date(n.pubDate);
+            fecha.textContent = isNaN(fechaDato.getTime())
+                ? ""
+                : "📅 " + fechaDato.toLocaleDateString("es-ES");
 
             const boton = document.createElement("button");
-            boton.textContent = "Leer noticia";
-            boton.type = "button";
+            boton.textContent = "Leer resumen";
 
-            const contenido = document.createElement("div");
-            contenido.className = "contenidoNoticia";
-            contenido.hidden = true;
+            const resumen = document.createElement("div");
+            resumen.hidden = true;
 
-            const resumen = document.createElement("p");
-            resumen.textContent = (noticia.description || "")
+            const texto = document.createElement("p");
+            texto.textContent = (n.description || "")
                 .replace(/<[^>]*>/g, " ")
                 .replace(/\s+/g, " ")
                 .trim();
 
             const cerrar = document.createElement("button");
             cerrar.textContent = "Cerrar noticia";
-            cerrar.type = "button";
 
             boton.addEventListener("click", () => {
-                contenido.hidden = false;
+                resumen.hidden = false;
                 boton.hidden = true;
             });
 
             cerrar.addEventListener("click", () => {
-                contenido.hidden = true;
+                resumen.hidden = true;
                 boton.hidden = false;
             });
 
-            contenido.append(resumen, cerrar);
-            tarjeta.append(titulo, fecha, boton, contenido);
+            resumen.append(texto, cerrar);
+            tarjeta.append(titulo, fecha, boton, resumen);
             lista.appendChild(tarjeta);
         });
 
-        estado.textContent =
-            "✅ Últimas noticias del Málaga CF";
+        estado.textContent = "✅ Últimas noticias del Málaga CF";
 
     } catch (error) {
         console.error("Error al cargar noticias:", error);
         estado.textContent =
-            "⚠️ No se pudieron cargar las noticias. Inténtalo de nuevo más tarde.";
+            "⚠️ No se pudieron cargar las noticias. Comprueba la conexión o el servicio RSS.";
     }
 }
 
 cargarNoticias();
 setInterval(cargarNoticias, 15 * 60 * 1000);
 </script>
+
 
 
 
