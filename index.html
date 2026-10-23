@@ -411,7 +411,6 @@ button:hover {
     <a href="rosaleda.html"> La Rosaleda</a>
     <a href="resultados.html">Resultados</a>
     <a href="#clasificacion">Clasificación</a>
-    <a href="#noticias">Noticias</a>
     <a href="#quiz">Quiz</a>
     <a href="leyendas.html">Leyendas</a>
 
@@ -606,125 +605,7 @@ setInterval(
         </p>
     </div>
 </section>
-<!-- ===== NOTICIAS ===== -->
 
-
-
-<section class="seccion" id="noticias">
-    <h2>📰 NOTICIAS DEL MÁLAGA</h2>
-    <p>💙🤍 ¡Toda la actualidad de los boquerones!</p>
-    <p id="estadoNoticias">⏳ Cargando noticias...</p>
-    <div id="listaNoticias"></div>
-</section>
-
-
-  
-
-
-    
-
-
-<script>
-async function cargarNoticias() {
-    const lista = document.getElementById("listaNoticias");
-    const estado = document.getElementById("estadoNoticias");
-
-    if (!lista || !estado) return;
-
-    estado.textContent = "⏳ Cargando noticias del Málaga...";
-    lista.replaceChildren();
-
-    try {
-        const feed = "https://sportdirectradio.es/feed/";
-        const api = "https://api.rss2json.com/v1/api.json?rss_url="
-            + encodeURIComponent(feed);
-
-        const respuesta = await fetch(api);
-
-        if (!respuesta.ok) {
-            throw new Error("Error HTTP: " + respuesta.status);
-        }
-
-        const datos = await respuesta.json();
-
-        if (datos.status !== "ok" || !Array.isArray(datos.items)) {
-            throw new Error("El servicio RSS no ha devuelto noticias");
-        }
-
-        const noticias = datos.items.filter(n => {
-            const texto = (n.title || "").toLowerCase()
-                + " " + (n.description || "").toLowerCase();
-
-            return texto.includes("málaga") || texto.includes("malaga");
-        }).slice(0, 6);
-
-        if (noticias.length === 0) {
-            estado.textContent = "No se encontraron noticias del Málaga.";
-            return;
-        }
-
-        noticias.forEach(n => {
-            const tarjeta = document.createElement("article");
-            tarjeta.className = "noticia";
-
-            const titulo = document.createElement("h3");
-            titulo.textContent = "📰 " + n.title;
-
-            const fecha = document.createElement("p");
-            const fechaDato = new Date(n.pubDate);
-            fecha.textContent = isNaN(fechaDato.getTime())
-                ? ""
-                : "📅 " + fechaDato.toLocaleDateString("es-ES");
-
-            const boton = document.createElement("button");
-            boton.textContent = "Leer resumen";
-
-            const resumen = document.createElement("div");
-            resumen.hidden = true;
-
-            const texto = document.createElement("p");
-            texto.textContent = (n.description || "")
-                .replace(/<[^>]*>/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
-
-            const cerrar = document.createElement("button");
-            cerrar.textContent = "Cerrar noticia";
-
-            boton.addEventListener("click", () => {
-                resumen.hidden = false;
-                boton.hidden = true;
-            });
-
-            cerrar.addEventListener("click", () => {
-                resumen.hidden = true;
-                boton.hidden = false;
-            });
-
-            resumen.append(texto, cerrar);
-            tarjeta.append(titulo, fecha, boton, resumen);
-            lista.appendChild(tarjeta);
-        });
-
-        estado.textContent = "✅ Últimas noticias del Málaga CF";
-
-    } catch (error) {
-        console.error("Error al cargar noticias:", error);
-        estado.textContent =
-            "⚠️ No se pudieron cargar las noticias. Comprueba la conexión o el servicio RSS.";
-    }
-}
-
-cargarNoticias();
-setInterval(cargarNoticias, 15 * 60 * 1000);
-</script>
-
-
-
-
-        
-
-    
 <!-- ===== CLASIFICACIÓN ===== -->
 
 <section class="seccion" id="clasificacion">
