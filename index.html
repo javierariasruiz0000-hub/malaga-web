@@ -656,73 +656,87 @@ setInterval(
 </section>  
     <!-- ===== NOTICIAS AUTOMÁTICAS ===== -->
 
+
 <section class="seccion" id="noticias-automaticas">
     <h2>📰 ÚLTIMAS NOTICIAS DEL MÁLAGA CF</h2>
+    <p id="estadoNoticias">⏳ Cargando noticias...</p>
     <div id="listaNoticias"></div>
 </section>
 
+
+
 <script>
 async function cargarNoticias() {
+    const estado = document.getElementById("estadoNoticias");
     const lista = document.getElementById("listaNoticias");
-    if (!lista) return;
 
-    lista.textContent = "⏳ Cargando últimas noticias...";
+    if (!estado || !lista) return;
+
+    estado.textContent = "⏳ Cargando noticias...";
+    lista.replaceChildren();
 
     try {
-        const pagina = "https://sportdirectradio.es/";
-        const proxy = "https://api.allorigins.win/raw?url="
-            + encodeURIComponent(pagina);
+        const rss = "https://sportdirectradio.es/feed/";
+        const api = "https://api.rss2json.com/v1/api.json?rss_url="
+            + encodeURIComponent(rss);
 
-        const respuesta = await fetch(proxy);
+        const respuesta = await fetch(api);
 
-        if (!respuesta.ok) throw new Error("No se pudo consultar la fuente");
+        if (!respuesta.ok) {
+            throw new Error("El servicio de noticias no responde");
+        }
 
-        const html = await respuesta.text();
-        const documento = new DOMParser().parseFromString(html, "text/html");
+        const datos = await respuesta.json();
 
-        const enlaces = Array.from(documento.querySelectorAll("a"))
-            .filter(a => {
-                const texto = (a.innerText || a.textContent || "").trim();
-                const href = a.href || "";
-                return texto.length > 20 &&
-                       href.startsWith("https://sportdirectradio.es/") &&
-                       !href.includes("#");
-            });
+        if (datos.status !== "ok" || !Array.isArray(datos.items)) {
+            throw new Error("Respuesta RSS no válida");
+        }
 
-        const vistos = new Set();
-        const noticias = enlaces.filter(a => {
-            const href = a.href.replace(/\/$/, "");
-            if (vistos.has(href)) return false;
-            vistos.add(href);
-            return true;
+        const noticias = datos.items.filter(n => {
+            const texto = ((n.title || "") + " " +
+                (n.description || "")).normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+            return texto.includes("malaga");
         }).slice(0, 6);
 
         if (!noticias.length) {
-            throw new Error("No se encontraron artículos");
+            estado.textContent = "No hay noticias del Málaga disponibles ahora.";
+            return;
         }
 
-        lista.replaceChildren();
-
-        noticias.forEach(a => {
+        noticias.forEach(n => {
             const tarjeta = document.createElement("article");
             tarjeta.className = "noticia";
 
             const titulo = document.createElement("h3");
-            titulo.textContent = "📰 " + a.textContent.trim();
+            titulo.textContent = "📰 " + n.title;
+
+            const fecha = document.createElement("p");
+            const d = new Date(n.pubDate);
+            fecha.textContent = isNaN(d.getTime()) ? "" :
+                "📅 " + d.toLocaleDateString("es-ES");
+
+            const resumen = document.createElement("p");
+            resumen.textContent = (n.description || "")
+                .replace(/<[^>]*>/g, " ")
+                .replace(/\s+/g, " ").trim();
 
             const enlace = document.createElement("a");
-            enlace.href = a.href;
+            enlace.href = n.link;
             enlace.target = "_blank";
             enlace.rel = "noopener noreferrer";
             enlace.textContent = "Leer noticia completa ↗";
 
-            tarjeta.append(titulo, enlace);
+            tarjeta.append(titulo, fecha, resumen, enlace);
             lista.appendChild(tarjeta);
         });
+
+        estado.textContent = "💙🤍 Últimas noticias actualizadas";
+
     } catch (error) {
-        console.error("Error cargando noticias:", error);
-        lista.textContent =
-            "No se pudieron cargar las noticias automáticamente. Inténtalo más tarde.";
+        console.error("Error al cargar noticias:", error);
+        estado.textContent = "No se pudieron cargar las noticias ahora.";
     }
 }
 
@@ -730,207 +744,6 @@ cargarNoticias();
 setInterval(cargarNoticias, 15 * 60 * 1000);
 </script>
 
-
-
-
-
-
-
-
-
-<script>
-
-async function cargarClasificacion() {
-
-    const tabla = document.getElementById("tablaClasificacion");
-
-    tabla.innerHTML = "<p>⏳ Cargando clasificación...</p>";
-
-    try {
-
-        const respuesta = await fetch(
-            "https://site.api.espn.com/apis/v2/sports/soccer/esp.1/standings"
-        );
-
-        if (!respuesta.ok) {
-            throw new Error("No se pudo conectar con ESPN");
-        }
-
-        const datos = await respuesta.json();
-
-        const entradas = datos.children[0].standings.entries;
-
-        let html = `
-            <div style="overflow-x:auto;">
-
-                <table style="
-                    width:100%;
-                    border-collapse:collapse;
-                    background:white;
-                    color:#111;
-                    border-radius:10px;
-                    overflow:hidden;
-                ">
-
-                    <thead>
-
-                        <tr style="
-                            background:#0066b3;
-                            color:white;
-                        ">
-
-                            <th>POS.</th>
-                            <th>EQUIPO</th>
-                            <th>PTS</th>
-                            <th>PJ</th>
-                            <th>PG</th>
-                            <th>PE</th>
-                            <th>PP</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-        `;
-
-        entradas.forEach((entrada, posicion) => {
-
-            const equipo = entrada.team.displayName;
-
-            let puntos = "-";
-            let partidos = "-";
-            let victorias = "-";
-            let empates = "-";
-            let derrotas = "-";
-
-            entrada.stats.forEach(stat => {
-
-                if (stat.name === "points") {
-                    puntos = stat.value;
-                }
-
-                if (stat.name === "gamesPlayed") {
-                    partidos = stat.value;
-                }
-
-                if (stat.name === "wins") {
-                    victorias = stat.value;
-                }
-
-                if (stat.name === "ties") {
-                    empates = stat.value;
-                }
-
-                if (stat.name === "losses") {
-                    derrotas = stat.value;
-                }
-
-            });
-
-            html += `
-
-                <tr style="
-                    border-bottom:1px solid #ddd;
-                ">
-
-                    <td style="
-                        text-align:center;
-                        padding:8px;
-                    ">
-                        <strong>${posicion + 1}</strong>
-                    </td>
-
-                    <td style="
-                        padding:8px;
-                    ">
-                        <strong>${equipo}</strong>
-                    </td>
-
-                    <td style="
-                        text-align:center;
-                        padding:8px;
-                    ">
-                        <strong>${puntos}</strong>
-                    </td>
-
-                    <td style="
-                        text-align:center;
-                        padding:8px;
-                    ">
-                        ${partidos}
-                    </td>
-
-                    <td style="
-                        text-align:center;
-                        padding:8px;
-                    ">
-                        ${victorias}
-                    </td>
-
-                    <td style="
-                        text-align:center;
-                        padding:8px;
-                    ">
-                        ${empates}
-                    </td>
-
-                    <td style="
-                        text-align:center;
-                        padding:8px;
-                    ">
-                        ${derrotas}
-                    </td>
-
-                </tr>
-
-            `;
-        });
-
-        html += `
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            <p style="
-                text-align:center;
-                margin-top:15px;
-            ">
-                🔄 Clasificación actualizada automáticamente
-            </p>
-
-        `;
-
-        tabla.innerHTML = html;
-
-    } catch (error) {
-
-        console.error(error);
-
-        tabla.innerHTML = `
-
-            <p style="text-align:center;">
-                ⚠️ No se pudo cargar la clasificación.
-            </p>
-
-        `;
-
-    }
-
-}
-
-
-// Cargar al abrir la página
-cargarClasificacion();
-
-
-// Actualizar cada 15 minutos
-setInterval(cargarClasificacion, 15 * 60 * 1000);
-
-</script>
     
 
 
