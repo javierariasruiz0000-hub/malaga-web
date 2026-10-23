@@ -656,196 +656,170 @@ setInterval(
 </section>  
     
 <!-- ===== NOTICIAS DEL MÁLAGA CF ===== -->
+
 <section class="seccion" id="noticias-automaticas">
-    <h2>📰 ÚLTIMAS NOTICIAS DEL MÁLAGA CF</h2>
-    <p id="estadoNoticias">💙🤍 Preparando las últimas noticias...</p>
-    <div id="listaNoticias" class="tarjetas-noticias"></div>
-    <p class="fuente-noticias">
-        Noticias oficiales del Málaga CF.
-        <a href="https://www.malagacf.com/noticias"
-           target="_blank" rel="noopener noreferrer">
-           Ver todas las noticias oficiales ↗
-        </a>
-    </p>
+  <h2>📰 EL RINCÓN MALAGUISTA</h2>
+  <p>💙🤍 Toda la actualidad de nuestro Málaga CF</p>
+  <p id="estadoNoticias">Buscando las últimas noticias...</p>
+  <div id="listaNoticias" class="rejilla-noticias"></div>
+  <p><a href="https://news.google.com/search?q=M%C3%A1laga+CF&hl=es&gl=ES&ceid=ES:es"
+        target="_blank" rel="noopener noreferrer">Ver más noticias ↗</a></p>
 </section>
 
 <style>
-.tarjetas-noticias {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 18px;
-    text-align: left;
+.rejilla-noticias {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+  text-align:left;
 }
-
-.tarjeta-noticia {
-    background: rgba(0, 27, 61, 0.65);
-    border: 1px solid rgba(101, 202, 255, 0.4);
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: 0 5px 18px rgba(0,0,0,0.2);
+.noticia-malaga {
+  background:linear-gradient(145deg,#06345f,#00152f);
+  border:1px solid #348ac4;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 8px 22px #0003;
 }
-
-.tarjeta-noticia h3 {
-    font-size: 20px;
-    line-height: 1.4;
+.noticia-malaga h3 {font-size:20px;line-height:1.4}
+.noticia-malaga p {line-height:1.7}
+.noticia-malaga .detalle {display:none}
+.noticia-malaga .detalle.abierto {display:block}
+.noticia-malaga button {
+  background:#0088d1;color:white;border-radius:9px;
 }
-
-.tarjeta-noticia p {
-    line-height: 1.7;
-}
-
-.tarjeta-noticia .detalle-noticia {
-    display: none;
-}
-
-.tarjeta-noticia .detalle-noticia.abierta {
-    display: block;
-}
-
-.tarjeta-noticia a,
-.tarjeta-noticia button {
-    color: #ffffff;
-}
-
-.fuente-noticias {
-    margin-top: 25px;
-}
-
-.fuente-noticias a {
-    color: #9cdeff;
-}
+.noticia-malaga a {color:#a8e1ff}
+.etiqueta-medio {font-size:13px;color:#a8e1ff}
 </style>
 
 <script>
-const noticiasMalagaIniciales = [
+async function cargarNoticiasMalaga() {
+  const estado = document.getElementById("estadoNoticias");
+  const lista = document.getElementById("listaNoticias");
+  if (!estado || !lista) return;
+
+  const fuentes = [
     {
-        titulo: "Tercera sesión en la Ciudad Deportiva; mañana, Rosaleda",
-        fecha: "21 de octubre de 2026",
-        resumen: "El Málaga CF continúa preparando sus próximos compromisos. El equipo trabajó en la Ciudad Deportiva y tenía prevista una nueva sesión en La Rosaleda.",
-        url: "https://www.malagacf.com/noticias/tercera-sesion-en-la-ciudad-deportiva-manana-rosaleda"
+      nombre: "Google Noticias",
+      url: "https://news.google.com/rss/search?q=M%C3%A1laga+CF+when%3A7d&hl=es&gl=ES&ceid=ES:es"
     },
     {
-        titulo: "Lunes de recuperación tras el partido de ayer",
-        fecha: "19 de octubre de 2026",
-        resumen: "La plantilla volvió al trabajo después del encuentro ante la Real Sociedad, con sesiones adaptadas a la carga de minutos de los jugadores.",
-        url: "https://www.malagacf.com/noticias/lunes-de-recuperacion-tras-el-partido-de-ayer"
-    },
-    {
-        titulo: "El Málaga cae contra la Real Sociedad (2-5)",
-        fecha: "18 de octubre de 2026",
-        resumen: "El Málaga disputó en La Rosaleda la novena jornada liguera. Niño y P. Martínez marcaron los goles malaguistas.",
-        url: "https://www.malagacf.com/noticias/el-malaga-cae-contra-la-real-sociedad-2-5"
+      nombre: "SportDirect Radio",
+      url: "https://sportdirectradio.es/feed/"
     }
-];
+  ];
 
-function mostrarNoticias(noticias, estado) {
-    const lista = document.getElementById("listaNoticias");
-    lista.replaceChildren();
+  estado.textContent = "🔄 Actualizando noticias...";
+  const resultados = await Promise.allSettled(
+    fuentes.map(async fuente => {
+      const api = "https://api.rss2json.com/v1/api.json?rss_url="
+        + encodeURIComponent(fuente.url);
+      const respuesta = await fetch(api);
+      if (!respuesta.ok) throw new Error("Fuente no disponible");
+      const datos = await respuesta.json();
+      if (datos.status !== "ok" || !Array.isArray(datos.items))
+        throw new Error("RSS no disponible");
 
-    noticias.forEach((noticia, indice) => {
-        const tarjeta = document.createElement("article");
-        tarjeta.className = "tarjeta-noticia";
+      return datos.items.map(item => ({
+        titulo: item.title || "Noticia del Málaga CF",
+        fecha: item.pubDate || "",
+        resumen: item.description || item.content || "",
+        enlace: item.link || "",
+        medio: item.author || fuente.nombre
+      }));
+    })
+  );
 
-        const titulo = document.createElement("h3");
-        titulo.textContent = "💙🤍 " + noticia.titulo;
-
-        const fecha = document.createElement("small");
-        fecha.textContent = noticia.fecha || "";
-
-        const resumen = document.createElement("p");
-        resumen.textContent = noticia.resumen || "";
-
-        const detalle = document.createElement("div");
-        detalle.className = "detalle-noticia";
-        detalle.id = "detalle-noticia-" + indice;
-
-        const boton = document.createElement("button");
-        boton.type = "button";
-        boton.textContent = "Leer más ↓";
-        boton.setAttribute("aria-expanded", "false");
-
-        boton.addEventListener("click", () => {
-            const abierta = detalle.classList.toggle("abierta");
-            boton.textContent = abierta ? "Leer menos ↑" : "Leer más ↓";
-            boton.setAttribute("aria-expanded", String(abierta));
-        });
-
-        const enlace = document.createElement("a");
-        enlace.href = noticia.url;
-        enlace.target = "_blank";
-        enlace.rel = "noopener noreferrer";
-        enlace.textContent = "Fuente original ↗";
-
-        detalle.appendChild(document.createTextNode(
-            noticia.detalle || noticia.resumen || ""
-        ));
-        detalle.appendChild(document.createElement("br"));
-        detalle.appendChild(enlace);
-
-        tarjeta.append(titulo, fecha, resumen, boton, detalle);
-        lista.appendChild(tarjeta);
+  const noticias = resultados
+    .filter(r => r.status === "fulfilled")
+    .flatMap(r => r.value)
+    .filter(n => {
+      const texto = (n.titulo + " " + n.resumen)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      return texto.includes("malaga") &&
+        texto.includes("cf") &&
+        n.enlace.startsWith("https://");
     });
 
-    document.getElementById("estadoNoticias").textContent = estado;
-}
+  const unicas = [...new Map(
+    noticias.map(n => [n.enlace, n])
+  ).values()];
 
-async function cargarNoticiasMalaga() {
-    const estado = document.getElementById("estadoNoticias");
+  unicas.sort((a,b) =>
+    new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+  );
 
-    // Siempre mostramos contenido mientras intentamos actualizarlo.
-    mostrarNoticias(
-        noticiasMalagaIniciales,
-        "💙🤍 Últimas noticias disponibles · Consultando actualizaciones..."
-    );
+  if (!unicas.length) {
+    estado.textContent =
+      "No hay noticias disponibles en este momento. Puedes consultar las fuentes directamente.";
+    return;
+  }
 
-    try {
-        const pagina = "https://www.malagacf.com/noticias";
-        const proxy = "https://api.allorigins.win/raw?url="
-            + encodeURIComponent(pagina);
+  lista.replaceChildren();
 
-        const respuesta = await fetch(proxy);
+  unicas.slice(0,12).forEach((n,i) => {
+    const tarjeta = document.createElement("article");
+    tarjeta.className = "noticia-malaga";
 
-        if (!respuesta.ok) throw new Error("Fuente no disponible");
+    const titulo = document.createElement("h3");
+    titulo.textContent = "💙🤍 " + n.titulo;
 
-        const html = await respuesta.text();
-        const documento = new DOMParser().parseFromString(html, "text/html");
-        const enlaces = [...documento.querySelectorAll('a[href*="/noticias/"]')];
+    const medio = document.createElement("p");
+    medio.className = "etiqueta-medio";
+    medio.textContent = "📰 " + n.medio;
 
-        const vistos = new Set();
-        const noticias = [];
+    const fecha = document.createElement("p");
+    const d = new Date(n.fecha);
+    fecha.textContent = isNaN(d.getTime())
+      ? "" : "📅 " + d.toLocaleDateString("es-ES");
 
-        for (const a of enlaces) {
-            const titulo = (a.textContent || "").trim();
-            const url = new URL(a.getAttribute("href"), pagina).href;
+    const textoLimpio = html => {
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      return (doc.body.textContent || "").replace(/\s+/g," ").trim();
+    };
 
-            if (!titulo || titulo.length < 12 || vistos.has(url)) continue;
-            if (!url.startsWith("https://www.malagacf.com/noticias/")) continue;
+    const resumen = document.createElement("p");
+    const contenido = textoLimpio(n.resumen);
+    resumen.textContent = contenido.length > 220
+      ? contenido.slice(0,220) + "…" : contenido;
 
-            vistos.add(url);
+    const detalle = document.createElement("div");
+    detalle.className = "detalle";
+    detalle.id = "detalle-noticia-" + i;
 
-            noticias.push({
-                titulo,
-                fecha: "",
-                resumen: "Lee el resumen y los detalles de esta noticia del Málaga CF.",
-                detalle: "Información publicada en la web oficial del club.",
-                url
-            });
+    const textoCompleto = document.createElement("p");
+    textoCompleto.textContent = contenido;
+    detalle.appendChild(textoCompleto);
 
-            if (noticias.length >= 6) break;
-        }
+    const enlace = document.createElement("a");
+    enlace.href = n.enlace;
+    enlace.target = "_blank";
+    enlace.rel = "noopener noreferrer";
+    enlace.textContent = "Leer fuente original ↗";
+    detalle.appendChild(enlace);
 
-        if (noticias.length) {
-            mostrarNoticias(noticias, "💙🤍 Noticias de la web oficial del Málaga CF");
-        }
-    } catch (error) {
-        console.error("No se pudieron actualizar las noticias:", error);
-        // Si la conexión falla, conservamos las noticias de respaldo.
-    }
+    const boton = document.createElement("button");
+    boton.textContent = "Leer más ↓";
+    boton.type = "button";
+    boton.setAttribute("aria-expanded","false");
+    boton.onclick = () => {
+      const abierto = detalle.classList.toggle("abierto");
+      boton.textContent = abierto ? "Leer menos ↑" : "Leer más ↓";
+      boton.setAttribute("aria-expanded",String(abierto));
+    };
+
+    tarjeta.append(titulo,medio,fecha,resumen,boton,detalle);
+    lista.appendChild(tarjeta);
+  });
+
+  estado.textContent = "💙🤍 " + Math.min(unicas.length,12)
+    + " noticias encontradas · Consulta periódica activada";
 }
 
 cargarNoticiasMalaga();
 setInterval(cargarNoticiasMalaga, 15 * 60 * 1000);
 </script>
+
 
 
     
