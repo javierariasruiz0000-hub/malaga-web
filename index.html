@@ -786,158 +786,99 @@ setInterval(cargarNoticias, 15 * 60 * 1000);
     <div id="listaNoticias"></div>
 
 </section>
+
 <script>
-
 async function cargarNoticias() {
-
-    const lista = document.getElementById("listaNoticias");
     const estado = document.getElementById("estadoNoticias");
+    const lista = document.getElementById("listaNoticias");
+
+    if (!estado || !lista) {
+        console.error("Faltan estadoNoticias o listaNoticias en el HTML.");
+        return;
+    }
+
+    estado.textContent = "⏳ Cargando las últimas noticias...";
+    lista.replaceChildren();
 
     try {
+        const feed = encodeURIComponent("https://sportdirectradio.es/feed/");
+        const url = "https://api.rss2json.com/v1/api.json?rss_url=" + feed;
 
-        const respuesta = await fetch(
-            "https://api.rss2json.com/v1/api.json?rss_url=https://sportdirectradio.es/feed/"
-        );
+        const respuesta = await fetch(url, {
+            signal: AbortSignal.timeout(12000)
+        });
 
         if (!respuesta.ok) {
-            throw new Error("Error al cargar noticias");
+            throw new Error("Servicio de noticias: HTTP " + respuesta.status);
         }
 
         const datos = await respuesta.json();
 
-        const noticias = datos.items
-            .filter(noticia => {
-
-                const texto =
-                    (noticia.title + " " + noticia.description)
-                    .toLowerCase();
-
-                return texto.includes("málaga") ||
-                       texto.includes("malaga");
-
-            })
-            .slice(0, 6);
-
-        if (noticias.length === 0) {
-
-            estado.textContent =
-                "⚠️ No se han encontrado noticias del Málaga.";
-
-            return;
-
+        if (datos.status !== "ok" || !Array.isArray(datos.items)) {
+            throw new Error("El servicio RSS no ha devuelto noticias válidas.");
         }
 
-        estado.textContent =
-            "🔄 Noticias actualizadas automáticamente";
+        const noticias = datos.items.filter(n => {
+            const texto = ((n.title || "") + " " + (n.description || ""))
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
 
-        let html = "";
+            return texto.includes("malaga cf") ||
+                   texto.includes("malaga");
+        }).slice(0, 6);
 
-        noticias.forEach(noticia => {
+        if (!noticias.length) {
+            estado.textContent = "No se han encontrado noticias del Málaga.";
+            return;
+        }
 
-            const fecha =
-                new Date(noticia.pubDate)
-                .toLocaleDateString("es-ES");
+        noticias.forEach(n => {
+            const tarjeta = document.createElement("article");
+            tarjeta.className = "noticia";
 
-            html += `
+            const titulo = document.createElement("h3");
+            titulo.textContent = "📰 " + n.title;
 
-                <div class="noticia">
+            const fecha = document.createElement("p");
+            const fechaDato = new Date(n.pubDate);
+            fecha.textContent = isNaN(fechaDato.getTime())
+                ? ""
+                : "📅 " + fechaDato.toLocaleDateString("es-ES");
 
-                    <h3>
-                        📰 ${noticia.title}
-                    </h3>
+            const resumen = document.createElement("p");
+            resumen.textContent = (n.description || "")
+                .replace(/<[^>]*>/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
 
-                    <p>
-                        📅 ${fecha}
-                    </p>
+            const enlace = document.createElement("a");
+            enlace.href = n.link;
+            enlace.target = "_blank";
+            enlace.rel = "noopener noreferrer";
+            enlace.textContent = "Leer noticia completa ↗";
 
-                    <button onclick="mostrarNoticia(this)">
-                        Leer noticia
-                    </button>
-
-                    <div
-                        class="contenidoNoticia"
-                        style="display:none;"
-                    >
-
-                        <p>
-                            ${noticia.description}
-                        </p>
-
-                        <a
-                            href="${noticia.link}"
-                            target="_blank"
-                        >
-                            Leer noticia completa
-                        </a>
-
-                        <br><br>
-
-                        <button onclick="cerrarNoticia(this)">
-                            Cerrar
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
+            tarjeta.append(titulo, fecha, resumen, enlace);
+            lista.appendChild(tarjeta);
         });
 
-        lista.innerHTML = html;
+        estado.textContent = "💙🤍 Últimas noticias del Málaga CF";
 
     } catch (error) {
-
-        console.error(error);
-
+        console.error("Error al cargar noticias:", error);
         estado.textContent =
-            "⚠️ No se pudieron cargar las noticias.";
+            "⚠️ No se pudieron cargar las noticias. Pulsa para reintentar.";
 
+        const reintentar = document.createElement("button");
+        reintentar.textContent = "🔄 Reintentar";
+        reintentar.onclick = cargarNoticias;
+        lista.appendChild(reintentar);
     }
-
 }
-
-
-function mostrarNoticia(boton) {
-
-    const noticia = boton.parentElement;
-
-    const contenido =
-        noticia.querySelector(".contenidoNoticia");
-
-    contenido.style.display = "block";
-
-    boton.style.display = "none";
-
-}
-
-
-function cerrarNoticia(boton) {
-
-    const noticia =
-        boton.parentElement.parentElement;
-
-    const contenido =
-        noticia.querySelector(".contenidoNoticia");
-
-    const botonLeer =
-        noticia.querySelector("button");
-
-    contenido.style.display = "none";
-
-    botonLeer.style.display = "inline-block";
-
-}
-
 
 cargarNoticias();
-
-setInterval(
-    cargarNoticias,
-    15 * 60 * 1000
-);
-
 </script>
+
 
 
 
