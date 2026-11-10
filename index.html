@@ -375,6 +375,54 @@ button {
 button:hover {
     transform: translateY(-1px);
 }
+.contenedor-clasificacion {
+  width: 95%;
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 25px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  overflow-x: auto;
+}
+
+.tabla-clasificacion {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  color: #172b45;
+  font-size: 19px;
+  text-align: center;
+}
+
+.tabla-clasificacion th {
+  background: #0066ad;
+  color: white;
+  padding: 16px;
+  font-size: 20px;
+}
+
+.tabla-clasificacion td {
+  padding: 13px 10px;
+  border-bottom: 1px solid #e5eaf0;
+}
+
+.tabla-clasificacion tbody tr:nth-child(even) {
+  background: #f3f8fc;
+}
+
+.tabla-clasificacion tbody tr:hover {
+  background: #dceeff;
+}
+
+.tabla-clasificacion .malaga {
+  background: #cce7ff !important;
+  color: #004b87;
+  font-weight: bold;
+  font-size: 20px;
+  border-top: 3px solid #0077c8;
+  border-bottom: 3px solid #0077c8;
+}
 </style>
     
 </head>
@@ -643,6 +691,9 @@ setInterval(
       <td>20</td><td>💙 Málaga CF 🤍</td><td>5</td>
     </tr>
   </tbody>
+<div class="contenedor-clasificacion">
+  <!-- Aquí dentro va tu tabla de clasificación -->
+</div>
 </table>  
     
 <!-- ===== NOTICIAS DEL MÁLAGA CF ===== -->
