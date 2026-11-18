@@ -423,85 +423,71 @@ button:hover {
   border-top: 3px solid #0077c8;
   border-bottom: 3px solid #0077c8;
 }
-/* EL RINCÓN MALAGUISTA - NOTICIAS */
-
-#noticias-automaticas {
-  background: #ffffff !important;
-  color: #17324d !important;
-  width: 94%;
-  max-width: 1250px;
-  margin: 40px auto;
-  padding: 35px;
-  border-radius: 16px;
-  box-shadow: 0 5px 22px rgba(0, 35, 75, 0.10);
-}
-
-#noticias-automaticas h2 {
-  color: #003568 !important;
-  font-size: 34px;
-  text-align: left;
-}
+/* TARJETAS PROFESIONALES DE NOTICIAS */
 
 #listaNoticias {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 22px;
-  margin-top: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 30px;
 }
 
 #listaNoticias > div {
   background: #ffffff !important;
-  color: #263b50 !important;
-  border: 1px solid #e2eaf2 !important;
-  border-top: 4px solid #0077c8 !important;
-  border-radius: 12px;
-  padding: 24px !important;
-  box-shadow: 0 4px 14px rgba(0, 35, 75, 0.08);
-  text-align: left;
-  transition: transform 0.2s, box-shadow 0.2s;
+  color: #26384a !important;
+  border: 1px solid #dce5ee !important;
+  border-radius: 14px !important;
+  padding: 25px !important;
+  box-shadow: 0 5px 18px rgba(0, 35, 75, 0.09);
+  text-align: left !important;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-#listaNoticias > div:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 9px 22px rgba(0, 35, 75, 0.14);
-}
-
+/* TÍTULO */
 #listaNoticias h3 {
   color: #003568 !important;
-  font-size: 20px;
-  line-height: 1.5;
-  margin-top: 0;
+  font-size: 21px !important;
+  font-weight: 800 !important;
+  line-height: 1.4 !important;
+  margin: 0 0 18px !important;
+  text-align: left !important;
 }
 
-#listaNoticias p {
-  color: #53677b !important;
-  font-size: 15px;
-  line-height: 1.7;
+/* AUTOR Y FECHA */
+#listaNoticias > div p {
+  color: #526579 !important;
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+  text-align: left !important;
+  margin: 8px 0 !important;
 }
 
+/* RESUMEN */
+#listaNoticias > div p:last-of-type {
+  color: #34495e !important;
+  font-size: 16px !important;
+  line-height: 1.8 !important;
+  margin-top: 18px !important;
+}
+
+/* BOTÓN */
 #listaNoticias button {
-  background: #0077c8 !important;
-  color: white !important;
-  border: none;
-  border-radius: 7px;
-  padding: 12px 20px;
-  font-size: 15px;
-  font-weight: bold;
+  background: #006db5 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 13px 22px !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  margin-top: 20px !important;
+  align-self: flex-start;
   cursor: pointer;
 }
 
 #listaNoticias button:hover {
   background: #004b87 !important;
-}
-
-@media (max-width: 600px) {
-  #noticias-automaticas {
-    padding: 20px;
-  }
-
-  #listaNoticias {
-    grid-template-columns: 1fr;
-  }
 }
 </style>
     
